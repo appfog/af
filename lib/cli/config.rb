@@ -7,14 +7,14 @@ require 'json/pure'
 module VMC::Cli
   class Config
 
-    DEFAULT_TARGET  = 'api.vcap.me'
+    DEFAULT_TARGET  = 'api.appfog.com'
 
-    TARGET_FILE    = '~/.vmc_target'
-    TOKEN_FILE     = '~/.vmc_token'
-    INSTANCES_FILE = '~/.vmc_instances'
-    ALIASES_FILE   = '~/.vmc_aliases'
-    CLIENTS_FILE   = '~/.vmc_clients'
-    MICRO_FILE     = '~/.vmc_micro'
+    TARGET_FILE    = '~/.af_target'
+    TOKEN_FILE     = '~/.af_token'
+    INSTANCES_FILE = '~/.af_instances'
+    ALIASES_FILE   = '~/.af_aliases'
+    CLIENTS_FILE   = '~/.af_clients'
+    MICRO_FILE     = '~/.af_micro'
 
     STOCK_CLIENTS = File.expand_path("../../../config/clients.yml", __FILE__)
 
@@ -42,7 +42,7 @@ module VMC::Cli
       end
 
       def suggest_url
-        @suggest_url ||= base_of(target_url)
+        @suggest_url ||= "aws.af.cm"
       end
 
       def store_target(target_host)

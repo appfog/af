@@ -4,13 +4,13 @@ $:.unshift File.expand_path("../lib", __FILE__)
 require 'cli/version'
 
 spec = Gem::Specification.new do |s|
-  s.name = "vmc"
+  s.name = "af"
   s.version = VMC::Cli::VERSION
-  s.author = "VMware"
-  s.email = "support@vmware.com"
-  s.homepage = "http://vmware.com"
-  s.description = s.summary = "Client library and CLI that provides access to the VMware Cloud Application Platform."
-  s.executables = %w(vmc)
+  s.author = "AppFog"
+  s.email = "support@appfog.com"
+  s.homepage = "http://appfog.com"
+  s.description = s.summary = "AppFog.com CLI"
+  s.executables = %w(af)
 
   s.platform = Gem::Platform::RUBY
   s.extra_rdoc_files = ["README.md", "LICENSE"]

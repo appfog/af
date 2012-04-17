@@ -1,14 +1,16 @@
-# VMC
+# AF
 
-The VMware Cloud CLI. This is the command line interface to VMware's Application Platform
+The AppFog CLI. This is the command line interface to AppFog.com
+
+af is based on vmc but will have features specific to the AppFog service as well as having the default target set to AppFog's service
 
 _Copyright 2010-2011, VMware, Inc. Licensed under the
 MIT license, please see the LICENSE file.  All rights reserved._
 
-    Usage: vmc [options] command [<args>] [command_options]
-    Try 'vmc help [command]' or 'vmc help options' for more information.
+    Usage: af [options] command [<args>] [command_options]
+    Try 'af help [command]' or 'af help options' for more information.
 
-    Currently available vmc commands are:
+    Currently available af commands are:
 
     Getting Started
       target [url]                                 Reports current target or sets a new target
@@ -94,9 +96,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       help [command]                               Get general help or help on a specific command
       help options                                 Get help on available options
 
-## Simple Story (for Ruby apps)
+## Simple Story (for PHP apps)
 
-    vmc target api.cloudfoundry.com
-    vmc login
-    bundle package
-    vmc push
+    af login
+    af push

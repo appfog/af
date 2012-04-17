@@ -152,11 +152,11 @@ class VMC::Cli::Runner
     case verb
 
     when 'version'
-      usage('vmc version')
+      usage('af version')
       set_cmd(:misc, :version)
 
     when 'target'
-      usage('vmc target [url] [--url]')
+      usage('af target [url] [--url]')
       if @args.size == 1
         set_cmd(:misc, :set_target, 1)
       else
@@ -164,31 +164,31 @@ class VMC::Cli::Runner
       end
 
     when 'targets'
-      usage('vmc targets')
+      usage('af targets')
       set_cmd(:misc, :targets)
 
     when 'tokens'
-      usage('vmc tokens')
+      usage('af tokens')
       set_cmd(:misc, :tokens)
 
     when 'info'
-      usage('vmc info')
+      usage('af info')
       set_cmd(:misc, :info)
 
     when 'runtimes'
-      usage('vmc runtimes')
+      usage('af runtimes')
       set_cmd(:misc, :runtimes)
 
     when 'frameworks'
-      usage('vmc frameworks')
+      usage('af frameworks')
       set_cmd(:misc, :frameworks)
 
     when 'user'
-      usage('vmc user')
+      usage('af user')
       set_cmd(:user, :info)
 
     when 'login'
-      usage('vmc login [email] [--email EMAIL] [--passwd PASS]')
+      usage('af login [email] [--email EMAIL] [--passwd PASS]')
       if @args.size == 1
         set_cmd(:user, :login, 1)
       else
@@ -196,11 +196,11 @@ class VMC::Cli::Runner
       end
 
     when 'logout'
-      usage('vmc logout')
+      usage('af logout')
       set_cmd(:user, :logout)
 
     when 'passwd'
-      usage('vmc passwd')
+      usage('af passwd')
       if @args.size == 1
         set_cmd(:user, :change_password, 1)
       else
@@ -208,7 +208,7 @@ class VMC::Cli::Runner
       end
 
     when 'add-user', 'add_user', 'create_user', 'create-user', 'register'
-      usage('vmc add-user [user] [--email EMAIL] [--passwd PASS]')
+      usage('af add-user [user] [--email EMAIL] [--passwd PASS]')
       if @args.size == 1
         set_cmd(:admin, :add_user, 1)
       else
@@ -216,35 +216,35 @@ class VMC::Cli::Runner
       end
 
     when 'delete-user', 'delete_user', 'unregister'
-      usage('vmc delete-user <user>')
+      usage('af delete-user <user>')
       set_cmd(:admin, :delete_user, 1)
 
     when 'users'
-      usage('vmc users')
+      usage('af users')
       set_cmd(:admin, :users)
 
     when 'apps'
-      usage('vmc apps')
+      usage('af apps')
       set_cmd(:apps, :apps)
 
     when 'list'
-      usage('vmc list')
+      usage('af list')
       set_cmd(:apps, :list)
 
     when 'start'
-      usage('vmc start <appname>')
+      usage('af start <appname>')
       set_cmd(:apps, :start, @args.size == 1 ? 1 : 0)
 
     when 'stop'
-      usage('vmc stop <appname>')
+      usage('af stop <appname>')
       set_cmd(:apps, :stop, @args.size == 1 ? 1 : 0)
 
     when 'restart'
-      usage('vmc restart <appname>')
+      usage('af restart <appname>')
       set_cmd(:apps, :restart, @args.size == 1 ? 1 : 0)
 
     when 'mem'
-      usage('vmc mem <appname> [memsize]')
+      usage('af mem <appname> [memsize]')
       if @args.size == 2
         set_cmd(:apps, :mem, 2)
       else
@@ -252,19 +252,19 @@ class VMC::Cli::Runner
       end
 
     when 'stats'
-      usage('vmc stats <appname>')
+      usage('af stats <appname>')
       set_cmd(:apps, :stats, @args.size == 1 ? 1 : 0)
 
     when 'map'
-      usage('vmc map <appname> <url>')
+      usage('af map <appname> <url>')
       set_cmd(:apps, :map, 2)
 
     when 'unmap'
-      usage('vmc unmap <appname> <url>')
+      usage('af unmap <appname> <url>')
       set_cmd(:apps, :unmap, 2)
 
     when 'delete'
-      usage('vmc delete <appname>')
+      usage('af delete <appname>')
       if @options[:all] && @args.size == 0
         set_cmd(:apps, :delete)
       else
@@ -272,7 +272,7 @@ class VMC::Cli::Runner
       end
 
     when 'files'
-      usage('vmc files <appname> [path] [--instance N] [--all] [--prefix]')
+      usage('af files <appname> [path] [--instance N] [--all] [--prefix]')
       if @args.size == 1
         set_cmd(:apps, :files, 1)
       else
@@ -280,28 +280,28 @@ class VMC::Cli::Runner
       end
 
     when 'logs'
-      usage('vmc logs <appname> [--instance N] [--all] [--prefix]')
+      usage('af logs <appname> [--instance N] [--all] [--prefix]')
       set_cmd(:apps, :logs, 1)
 
     when 'instances', 'scale'
       if @args.size > 1
-        usage('vmc instances <appname> <num|delta>')
+        usage('af instances <appname> <num|delta>')
         set_cmd(:apps, :instances, 2)
       else
-        usage('vmc instances <appname>')
+        usage('af instances <appname>')
         set_cmd(:apps, :instances, 1)
       end
 
     when 'crashes'
-      usage('vmc crashes <appname>')
+      usage('af crashes <appname>')
       set_cmd(:apps, :crashes, 1)
 
     when 'crashlogs'
-      usage('vmc crashlogs <appname>')
+      usage('af crashlogs <appname>')
       set_cmd(:apps, :crashlogs, 1)
 
     when 'push'
-      usage('vmc push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
+      usage('af push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
       if @args.size == 1
         set_cmd(:apps, :push, 1)
       else
@@ -309,19 +309,19 @@ class VMC::Cli::Runner
       end
 
     when 'update'
-      usage('vmc update <appname> [--path PATH]')
+      usage('af update <appname> [--path PATH]')
       set_cmd(:apps, :update, @args.size == 1 ? 1 : 0)
 
     when 'services'
-      usage('vmc services')
+      usage('af services')
       set_cmd(:services, :services)
 
     when 'env'
-      usage('vmc env <appname>')
+      usage('af env <appname>')
       set_cmd(:apps, :environment, 1)
 
     when 'env-add'
-      usage('vmc env-add <appname> <variable[=]value>')
+      usage('af env-add <appname> <variable[=]value>')
       if @args.size == 2
         set_cmd(:apps, :environment_add, 2)
       elsif @args.size == 3
@@ -329,18 +329,18 @@ class VMC::Cli::Runner
       end
 
     when 'env-del'
-      usage('vmc env-del <appname> <variable>')
+      usage('af env-del <appname> <variable>')
       set_cmd(:apps, :environment_del, 2)
 
     when 'create-service', 'create_service'
-      usage('vmc create-service [service] [servicename] [appname] [--name servicename] [--bind appname]')
+      usage('af create-service [service] [servicename] [appname] [--name servicename] [--bind appname]')
       set_cmd(:services, :create_service) if @args.size == 0
       set_cmd(:services, :create_service, 1) if @args.size == 1
       set_cmd(:services, :create_service, 2) if @args.size == 2
       set_cmd(:services, :create_service, 3) if @args.size == 3
 
     when 'delete-service', 'delete_service'
-      usage('vmc delete-service <service>')
+      usage('af delete-service <service>')
       if @args.size == 1
         set_cmd(:services, :delete_service, 1)
       else
@@ -348,23 +348,23 @@ class VMC::Cli::Runner
       end
 
     when 'bind-service', 'bind_service'
-      usage('vmc bind-service <servicename> <appname>')
+      usage('af bind-service <servicename> <appname>')
       set_cmd(:services, :bind_service, 2)
 
     when 'unbind-service', 'unbind_service'
-      usage('vmc unbind-service <servicename> <appname>')
+      usage('af unbind-service <servicename> <appname>')
       set_cmd(:services, :unbind_service, 2)
 
     when 'clone-services'
-      usage('vmc clone-services <src-app> <dest-app>')
+      usage('af clone-services <src-app> <dest-app>')
       set_cmd(:services, :clone_services, 2)
 
     when 'aliases'
-      usage('vmc aliases')
+      usage('af aliases')
       set_cmd(:misc, :aliases)
 
     when 'alias'
-      usage('vmc alias <alias[=]command>')
+      usage('af alias <alias[=]command>')
       if @args.size == 1
         set_cmd(:misc, :alias, 1)
       elsif @args.size == 2
@@ -372,21 +372,21 @@ class VMC::Cli::Runner
       end
 
     when 'unalias'
-      usage('vmc unalias <alias>')
+      usage('af unalias <alias>')
       set_cmd(:misc, :unalias, 1)
 
     when 'tunnel'
-      usage('vmc tunnel [servicename] [clientcmd] [--port port]')
+      usage('af tunnel [servicename] [clientcmd] [--port port]')
       set_cmd(:services, :tunnel, 0) if @args.size == 0
       set_cmd(:services, :tunnel, 1) if @args.size == 1
       set_cmd(:services, :tunnel, 2) if @args.size == 2
 
     when 'rails-console'
-      usage('vmc rails-console <appname>')
+      usage('af rails-console <appname>')
       set_cmd(:apps, :console, 1)
 
     when 'micro'
-      usage('vmc micro <online|offline|status> [--password password] [--save] [--vmx file] [--vmrun executable]')
+      usage('af micro <online|offline|status> [--password password] [--save] [--vmx file] [--vmrun executable]')
       if %w[online offline status].include?(@args[0])
           set_cmd(:micro, @args[0].to_sym, 1)
       end
@@ -406,16 +406,16 @@ class VMC::Cli::Runner
       parse_options!
 
     when 'manifest'
-      usage('vmc manifest')
+      usage('af manifest')
       set_cmd(:manifest, :edit)
 
     when 'extend-manifest'
-      usage('vmc extend-manifest')
+      usage('af extend-manifest')
       set_cmd(:manifest, :extend, 1)
 
     else
       if verb
-        display "vmc: Unknown command [#{verb}]"
+        display "af: Unknown command [#{verb}]"
         display basic_usage
         exit(false)
       end

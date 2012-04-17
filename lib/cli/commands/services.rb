@@ -86,7 +86,7 @@ module VMC::Cli::Command
 
     def tunnel(service=nil, client_name=nil)
       unless defined? Caldecott
-        display "To use `vmc tunnel', you must first install Caldecott:"
+        display "To use `af tunnel', you must first install Caldecott:"
         display ""
         display "\tgem install caldecott"
         display ""

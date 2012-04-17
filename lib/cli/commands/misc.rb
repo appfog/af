@@ -2,7 +2,7 @@ module VMC::Cli::Command
 
   class Misc < Base
     def version
-      say "vmc #{VMC::Cli::VERSION}"
+      say "af #{VMC::Cli::VERSION}"
     end
 
     def target

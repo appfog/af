@@ -1,8 +1,8 @@
 class VMC::Cli::Runner
 
   def basic_usage
-    "Usage: vmc [options] command [<args>] [command_options]\n" +
-    "Try 'vmc help [command]' or 'vmc help options' for more information."
+    "Usage: af [options] command [<args>] [command_options]\n" +
+    "Try 'af help [command]' or 'af help options' for more information."
   end
 
   def display_usage
@@ -22,7 +22,7 @@ class VMC::Cli::Runner
 
 #{basic_usage}
 
-Currently available vmc commands are:
+Currently available af commands are:
 
   Getting Started
     target [url]                                 Reports current target or sets a new target
@@ -98,7 +98,7 @@ Currently available vmc commands are:
       [--vmx file]                               Path to micro.vmx
       [--vmrun executable]                       Path to vmrun executable
       [--password cleartext]                     Cleartext password for guest VM vcap user
-      [--save]                                   Save cleartext password in ~/.vmc_micro
+      [--save]                                   Save cleartext password in ~/.af_micro
 
   Misc
     aliases                                      List aliases
