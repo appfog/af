@@ -25,7 +25,7 @@ module VMC::Cli::Command
     alias :tokens :targets
 
     def set_target(target_url)
-      target_url = "http://#{target_url}" unless /^https?/ =~ target_url
+      target_url = "https://#{target_url}" unless /^https?/ =~ target_url
       target_url = target_url.gsub(/\/+$/, '')
       client = VMC::Client.new(target_url)
       unless client.target_valid?

@@ -37,7 +37,7 @@ class VMC::Client
 
   # Initialize new client to the target_uri with optional auth_token
   def initialize(target_url=VMC::DEFAULT_TARGET, auth_token=nil)
-    target_url = "http://#{target_url}" unless /^https?/ =~ target_url
+    target_url = "https://#{target_url}" unless /^https?/ =~ target_url
     target_url = target_url.gsub(/\/+$/, '')
     @target = target_url
     @auth_token = auth_token

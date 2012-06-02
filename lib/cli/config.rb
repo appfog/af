@@ -32,7 +32,7 @@ module VMC::Cli
         else
           @target_url  = DEFAULT_TARGET
         end
-        @target_url = "http://#{@target_url}" unless /^https?/ =~ @target_url
+        @target_url = "https://#{@target_url}" unless /^https?/ =~ @target_url
         @target_url = @target_url.gsub(/\/+$/, '')
         @target_url
       end
