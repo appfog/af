@@ -34,7 +34,7 @@ describe 'VMC::Client' do
 
   it 'should normalize target with no scheme' do
     client = VMC::Client.new('api.cloudfoundry.com')
-    client.target.should == 'http://api.cloudfoundry.com'
+    client.target.should == 'https://api.cloudfoundry.com'
   end
 
   it 'should properly initialize with auth_token' do
@@ -221,7 +221,7 @@ describe 'VMC::Client' do
     services_path = "#{@local_target}/#{VMC::SERVICES_PATH}"
     stub_request(:post, services_path).to_return(File.new(spec_asset('good_create_service.txt')))
     client = VMC::Client.new(@local_target, @auth_token)
-    client.create_service('redis', 'foo')
+    client.create_service('aws', 'redis', 'foo')
   end
 
   it 'should complain if we try to provision a service that already exists with same name' do
@@ -232,7 +232,7 @@ describe 'VMC::Client' do
     services_path = "#{@local_target}/#{VMC::SERVICES_PATH}"
     stub_request(:post, services_path).to_return(File.new(spec_asset('service_already_exists.txt')))
     client = VMC::Client.new(@local_target, @auth_token)
-    expect { client.create_service('redis', 'foo') }.to raise_error(VMC::Client::NotFound)
+    expect { client.create_service('aws','redis', 'foo') }.to raise_error(VMC::Client::NotFound)
   end
 
   it 'should complain if we try to provision a service that does not exist' do
@@ -243,7 +243,7 @@ describe 'VMC::Client' do
     services_path = "#{@local_target}/#{VMC::SERVICES_PATH}"
     stub_request(:post, services_path).to_return(File.new(spec_asset('service_not_found.txt')))
     client = VMC::Client.new(@local_target, @auth_token)
-    expect { client.create_service('redis', 'foo') }.to raise_error(VMC::Client::NotFound)
+    expect { client.create_service('aws', 'redis', 'foo') }.to raise_error(VMC::Client::NotFound)
   end
 
   it 'should allow us to delete a provisioned service' do
@@ -337,7 +337,7 @@ describe 'VMC::Client' do
     # e.g. provisioning too many instances of mysql service.
     stub_request(:post, services_path).to_return(File.new(spec_asset('service_gateway_fail.txt')))
     client = VMC::Client.new(@local_target, @auth_token)
-    expect { client.create_service('mysql', 'foo') }.to raise_error(VMC::Client::TargetError)
+    expect { client.create_service('aws', 'mysql', 'foo') }.to raise_error(VMC::Client::TargetError)
   end
 
   # WebMock.allow_net_connect!

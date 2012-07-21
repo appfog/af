@@ -33,19 +33,24 @@ module VMC::Cli
 
     def display_provisioned_services_table(services)
       return unless services && !services.empty?
+      
+      infra_supported = !services.detect { |a| a[:infra] }.empty?
       services_table = table do |t|
         t.headings = 'Name', 'Service'
+        t.headings << 'In' if infra_supported
         services.each do |service|
-          t << [ service[:name], service[:vendor] ]
+          s =  [ service[:name], service[:vendor] ]
+          s << service[:infra][:name] if infra_supported
+          t << s
         end
       end
       display services_table
     end
 
-    def create_service_banner(service, name, display_name=false)
+    def create_service_banner(service, name, display_name=false, infra=nil)
       sn = " [#{name}]" if display_name
       display "Creating Service#{sn}: ", false
-      client.create_service(service, name)
+      client.create_service(infra,service, name)
       display 'OK'.green
     end
 

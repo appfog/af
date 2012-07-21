@@ -98,6 +98,9 @@ class VMC::Cli::Runner
 
       # Proxying for another user, requires admin privileges
       opts.on('-u PROXY')          { |proxy| @options[:proxy] = proxy }
+      
+      # Select infrastructure
+      opts.on('--infra INFRA')     { |infra| @options[:infra] = infra }
 
       opts.on_tail('--options')    {          puts "#{opts}\n"; exit }
     end
@@ -301,7 +304,7 @@ class VMC::Cli::Runner
       set_cmd(:apps, :crashlogs, 1)
 
     when 'push'
-      usage('af push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start]')
+      usage('af push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start] [--infra infraname]')
       if @args.size == 1
         set_cmd(:apps, :push, 1)
       else
@@ -333,7 +336,7 @@ class VMC::Cli::Runner
       set_cmd(:apps, :environment_del, 2)
 
     when 'create-service', 'create_service'
-      usage('af create-service [service] [servicename] [appname] [--name servicename] [--bind appname]')
+      usage('af create-service [service] [servicename] [appname] [--name servicename] [--bind appname] [--infra infraname]')
       set_cmd(:services, :create_service) if @args.size == 0
       set_cmd(:services, :create_service, 1) if @args.size == 1
       set_cmd(:services, :create_service, 2) if @args.size == 2

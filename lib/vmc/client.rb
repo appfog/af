@@ -6,7 +6,7 @@
 #   client = VMC::Client.new('api.vcap.me')
 #   client.login(:user, :pass)
 #   client.create('myapplication', manifest)
-#   client.create_service('redis', 'my_redis_service', opts);
+#   client.create_service('aws', 'redis', 'my_redis_service', opts);
 #
 
 require 'rubygems'
@@ -167,7 +167,7 @@ class VMC::Client
     json_get(VMC::SERVICES_PATH)
   end
 
-  def create_service(service, name)
+  def create_service(infra,service, name)
     check_login_status
     services = services_info
     services ||= []
@@ -184,6 +184,7 @@ class VMC::Client
               :type => service_descr[:type], :tier => 'free',
               :vendor => service, :version => version_str
             }
+            service_hash[:infra] = { :provider => infra } if infra
             break
           end
         end
