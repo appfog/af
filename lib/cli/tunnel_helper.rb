@@ -295,18 +295,19 @@ module VMC::Cli
     end
 
     def push_caldecott(token,infra)
-      client.create_app(
-        tunnel_appname(infra),
-        { :name => tunnel_appname(infra),
+      manifest = {
+          :name => tunnel_appname(infra),
           :staging => {:framework => "sinatra"},
           :uris => ["#{tunnel_uniquename(infra)}.#{base_for_infra(infra)}"],
           :instances => 1,
           :resources => {:memory => 64},
-          :env => ["CALDECOTT_AUTH=#{token}"],
-          :infra => { 
-            :provider => infra # FIXME what if infra not supported ?
-          }
+          :env => ["CALDECOTT_AUTH=#{token}"]
         }
+      manifest[:infra] = { :provider => infra } if infra 
+
+      client.create_app(
+        tunnel_appname(infra),
+        manifest
       )
 
       apps_cmd.send(:upload_app_bits, tunnel_appname(infra), HELPER_APP)

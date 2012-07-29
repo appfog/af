@@ -118,7 +118,7 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      infra_name = info[:infra] ? info[:infra][:name] : "aws" # FIXME where to get default infra ?
+      infra_name = info[:infra] ? info[:infra][:name] : default_infra
       
       if not tunnel_pushed?(infra_name)
         display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."

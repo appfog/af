@@ -221,6 +221,11 @@ module VMC::Cli
         end
         @frameworks
       end
+
+      def default_infra
+        "aws"
+      end
+
     end
   end
 end

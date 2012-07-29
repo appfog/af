@@ -27,7 +27,11 @@ module VMC::Cli
             "Please redeploy your app to enable support."
         end
       end
-      conn_info = {'hostname' => entry[:console_ip], 'port' => entry[:console_port]}
+      conn_info = {
+        'hostname' => entry[:console_ip],
+        'port' => entry[:console_port],
+        'infra' => app.infra ? app.infra.provider : 'aws'
+        }
     end
 
     def start_local_console(port, appname)
