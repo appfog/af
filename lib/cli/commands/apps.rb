@@ -73,23 +73,25 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      if not tunnel_pushed?
+      infra_name = "aws" # FIXME get this out of conn_info
+
+      if not tunnel_pushed?(infra_name)
         display "Deploying tunnel application '#{tunnel_appname}'."
         auth = UUIDTools::UUID.random_create.to_s
-        push_caldecott(auth)
-        start_caldecott
+        push_caldecott(auth,infra_name)
+        start_caldecott(infra_name)
       else
-        auth = tunnel_auth
+        auth = tunnel_auth(infra_name)
       end
 
-      if not tunnel_healthy?(auth)
+      if not tunnel_healthy?(auth,infra_name)
         display "Redeploying tunnel application '#{tunnel_appname}'."
         # We don't expect caldecott not to be running, so take the
         # most aggressive restart method.. delete/re-push
         client.delete_app(tunnel_appname)
-        invalidate_tunnel_app_info
-        push_caldecott(auth)
-        start_caldecott
+        invalidate_tunnel_app_info(infra_name)
+        push_caldecott(auth,infra_name)
+        start_caldecott(infra_name)
       end
 
       start_tunnel(port, conn_info, auth)
