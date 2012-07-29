@@ -38,7 +38,7 @@ module VMC::Cli::Command
         name = random_service_name(service)
         picked_name = true
       end
-      create_service_banner(service, name, picked_name)
+      create_service_banner(service, name, picked_name, @options[:infra])
       appname = @options[:bind] unless appname
       bind_service_banner(name, appname) if appname
     end

@@ -101,4 +101,12 @@ describe 'VMC::Cli::Runner' do
     cli.options[:token_file].should ==  '/tmp/foobar'
   end
 
+  it "should parse infra correctly" do
+    cli = VMC::Cli::Runner.new().parse_options!
+    cli.options[:infra].should_not be    
+    args = "--infra aws"
+    cli = VMC::Cli::Runner.new(args.split).parse_options!
+    cli.options[:infra].should == "aws"
+  end
+  
 end

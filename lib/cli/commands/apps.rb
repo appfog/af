@@ -22,11 +22,16 @@ module VMC::Cli::Command
 
       display "\n"
       return display "No Applications" if apps.nil? || apps.empty?
+      
+      infra_supported = !apps.detect { |a| a[:infra] }.empty?
 
       apps_table = table do |t|
         t.headings = 'Application', '# ', 'Health', 'URLS', 'Services'
+        t.headings << 'In' if infra_supported
         apps.each do |app|
-          t << [app[:name], app[:instances], health(app), app[:uris].join(', '), app[:services].join(', ')]
+          a = [app[:name], app[:instances], health(app), app[:uris].join(', '), app[:services].join(', ')]
+          a << app[:infra][:name] if infra_supported
+          t << a  
         end
       end
       display apps_table
@@ -920,6 +925,7 @@ module VMC::Cli::Command
       memswitch = normalize_mem(memswitch) if memswitch
       command = info(:command)
       runtime = info(:runtime)
+      infra = info(:infra)
 
       # Check app existing upfront if we have appname
       app_checked = false
@@ -1015,18 +1021,19 @@ module VMC::Cli::Command
         }
       }
       manifest[:staging][:command] = command if command
-
+      manifest[:infra] = { :provider => infra } if infra
+      
       # Send the manifest to the cloud controller
       client.create_app(appname, manifest)
       display 'OK'.green
 
-
+      
       existing = Set.new(client.services.collect { |s| s[:name] })
 
       if @app_info && services = @app_info["services"]
         services.each do |name, info|
           unless existing.include? name
-            create_service_banner(info["type"], name, true)
+            create_service_banner(info["type"], name, true, infra)
           end
 
           bind_service_banner(name, appname)
