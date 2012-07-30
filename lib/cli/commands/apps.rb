@@ -76,7 +76,7 @@ module VMC::Cli::Command
       infra_name = conn_info['infra']
 
       if not tunnel_pushed?(infra_name)
-        display "Deploying tunnel application '#{tunnel_appname}'."
+        display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."
         auth = UUIDTools::UUID.random_create.to_s
         push_caldecott(auth,infra_name)
         start_caldecott(infra_name)
