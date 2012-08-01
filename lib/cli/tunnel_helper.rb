@@ -26,11 +26,10 @@ module VMC::Cli
     end
 
     def tunnel_app_info(infra)
-      return @tun_app_info if @tunnel_app_info
       begin
-        @tun_app_info = client.app_info(tunnel_appname(infra))
+        client.app_info(tunnel_appname(infra))
       rescue => e
-        @tun_app_info = nil
+        nil
       end
     end
 
@@ -43,7 +42,6 @@ module VMC::Cli
     end
 
     def tunnel_url(infra)
-      return @tunnel_url if @tunnel_url
 
       tun_url = tunnel_app_info(infra)[:uris][0]
 
@@ -57,7 +55,7 @@ module VMC::Cli
 
         # we expect a 404 since this request isn't auth'd
         rescue RestClient::ResourceNotFound
-          return @tunnel_url = url
+          return url
         end
       end
 
@@ -65,9 +63,6 @@ module VMC::Cli
     end
 
     def invalidate_tunnel_app_info(infra)
-      # FIXME need a hash for url and app info
-      @tunnel_url = nil
-      @tunnel_app_info = nil
     end
 
     def tunnel_pushed?(infra)
@@ -82,7 +77,6 @@ module VMC::Cli
           "#{tunnel_url(infra)}/info",
           "Auth-Token" => token
         )
-
         info = JSON.parse(response)
         if info["version"] == HELPER_VERSION
           true
@@ -185,11 +179,11 @@ module VMC::Cli
       display ''
     end
 
-    def start_tunnel(local_port, conn_info, auth)
+    def start_tunnel(local_port, conn_info, auth, infra)
       @local_tunnel_thread = Thread.new do
         Caldecott::Client.start({
           :local_port => local_port,
-          :tun_url => tunnel_url(conn_info['infra']),
+          :tun_url => tunnel_url(infra),
           :dst_host => conn_info['hostname'],
           :dst_port => conn_info['port'],
           :log_file => STDOUT,
@@ -297,7 +291,7 @@ module VMC::Cli
     def push_caldecott(token,infra)
       manifest = {
           :name => tunnel_appname(infra),
-          :staging => {:framework => "sinatra"},
+          :staging => {:framework => "sinatra", :runtime => "ruby18" },
           :uris => ["#{tunnel_uniquename(infra)}.#{base_for_infra(infra)}"],
           :instances => 1,
           :resources => {:memory => 64},
@@ -343,6 +337,8 @@ module VMC::Cli
         "eu01.aws.af.cm"
       when "rs"
         "rs.af.cm"
+      when "aws"
+        "aws.af.cm"
       else
         "aws.af.cm"
       end

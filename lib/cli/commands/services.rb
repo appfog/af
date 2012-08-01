@@ -150,7 +150,7 @@ module VMC::Cli::Command
       conn_info = tunnel_connection_info info[:vendor], service, auth, infra_name
       display_tunnel_connection_info(conn_info)
       display "Starting tunnel to #{service.bold} on port #{port.to_s.bold}."
-      start_tunnel(port, conn_info, auth)
+      start_tunnel(port, conn_info, auth, infra_name)
 
       clients = get_clients_for(info[:vendor])
 

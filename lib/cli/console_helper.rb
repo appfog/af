@@ -29,8 +29,7 @@ module VMC::Cli
       end
       conn_info = {
         'hostname' => entry[:console_ip],
-        'port' => entry[:console_port],
-        'infra' => app[:infra] ? app[:infra][:provider] : 'aws'
+        'port' => entry[:console_port]
         }
     end
 

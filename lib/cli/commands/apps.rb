@@ -23,7 +23,7 @@ module VMC::Cli::Command
       display "\n"
       return display "No Applications" if apps.nil? || apps.empty?
       
-      infra_supported = !apps.detect { |a| a[:infra] }.empty?
+      infra_supported = !apps.detect { |a| a[:infra] }.nil?
 
       apps_table = table do |t|
         t.headings = 'Application', '# ', 'Health', 'URLS', 'Services'
@@ -53,6 +53,10 @@ module VMC::Cli::Command
     end
 
     def console(appname, interactive=true)
+
+      app = client.app_info(appname)
+      infra_name = app[:infra] ? app[:infra][:name] : 'aws' # FIXME 
+
       unless defined? Caldecott
         display "To use `vmc rails-console', you must first install Caldecott:"
         display ""
@@ -73,8 +77,6 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      infra_name = conn_info['infra']
-
       if not tunnel_pushed?(infra_name)
         display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."
         auth = UUIDTools::UUID.random_create.to_s
@@ -84,17 +86,18 @@ module VMC::Cli::Command
         auth = tunnel_auth(infra_name)
       end
 
+
       if not tunnel_healthy?(auth,infra_name)
-        display "Redeploying tunnel application '#{tunnel_appname}'."
+        display "Redeploying tunnel application '#{tunnel_appname(infra_name)}'."
         # We don't expect caldecott not to be running, so take the
         # most aggressive restart method.. delete/re-push
-        client.delete_app(tunnel_appname)
+        client.delete_app(tunnel_appname(infra_name))
         invalidate_tunnel_app_info(infra_name)
         push_caldecott(auth,infra_name)
         start_caldecott(infra_name)
       end
 
-      start_tunnel(port, conn_info, auth)
+      start_tunnel(port, conn_info, auth, infra_name)
       wait_for_tunnel_start(port)
       start_local_console(port, appname) if interactive
       port
