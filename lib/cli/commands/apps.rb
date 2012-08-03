@@ -904,6 +904,7 @@ module VMC::Cli::Command
     end
 
     def do_push(appname=nil)
+
       unless @app_info || no_prompt
         @manifest = { "applications" => { @path => { "name" => appname } } }
 
@@ -931,6 +932,10 @@ module VMC::Cli::Command
       command = info(:command)
       runtime = info(:runtime)
       infra = info(:infra)
+
+      if infra
+        err "Infra '#{infra}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra)
+      end
 
       # Check app existing upfront if we have appname
       app_checked = false
@@ -978,7 +983,6 @@ module VMC::Cli::Command
 
       default_url = "None"
       default_url = "#{appname}.#{VMC::Cli::Config.suggest_url}" if framework.require_url?
-
 
       unless no_prompt || url || !framework.require_url?
         url = ask(

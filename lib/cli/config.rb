@@ -23,6 +23,7 @@ module VMC::Cli
       attr_accessor :output
       attr_accessor :trace
       attr_accessor :nozip
+      attr_accessor :infra
 
       def target_url
         return @target_url if @target_url
@@ -42,7 +43,7 @@ module VMC::Cli
       end
 
       def suggest_url
-        @suggest_url ||= "aws.af.cm"
+        @suggest_url ||= VMC::Cli::InfraHelper.base_for_infra(@infra)
       end
 
       def store_target(target_host)

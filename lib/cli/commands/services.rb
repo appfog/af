@@ -120,6 +120,11 @@ module VMC::Cli::Command
 
       infra_name = info[:infra] ? info[:infra][:name] : default_infra
       
+      if infra_name
+        err "Infra '#{infra_name}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra_name)
+      end
+
+      
       if not tunnel_pushed?(infra_name)
         display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."
         auth = UUIDTools::UUID.random_create.to_s

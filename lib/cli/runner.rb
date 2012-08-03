@@ -459,6 +459,7 @@ class VMC::Cli::Runner
     VMC::Cli::Config.nozip      = @options.delete(:nozip)
     VMC::Cli::Config.trace      = @options.delete(:trace)
     VMC::Cli::Config.output   ||= STDOUT unless @options[:quiet]
+    VMC::Cli::Config.infra      = @options[:infra]
 
     process_aliases!
     parse_command!

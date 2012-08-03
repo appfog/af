@@ -292,7 +292,7 @@ module VMC::Cli
       manifest = {
           :name => tunnel_appname(infra),
           :staging => {:framework => "sinatra", :runtime => "ruby18" },
-          :uris => ["#{tunnel_uniquename(infra)}.#{base_for_infra(infra)}"],
+          :uris => ["#{tunnel_uniquename(infra)}.#{VMC::Cli::InfraHelper.base_for_infra(infra)}"],
           :instances => 1,
           :resources => {:memory => 64},
           :env => ["CALDECOTT_AUTH=#{token}"]
@@ -329,19 +329,5 @@ module VMC::Cli
       a
     end
     
-    def base_for_infra(infra)
-      case infra 
-      when "ap-aws" 
-        "ap01.aws.af.cm"
-      when "eu-aws"
-        "eu01.aws.af.cm"
-      when "rs"
-        "rs.af.cm"
-      when "aws"
-        "aws.af.cm"
-      else
-        "aws.af.cm"
-      end
-    end
   end
 end

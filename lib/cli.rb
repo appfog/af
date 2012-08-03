@@ -27,6 +27,7 @@ module VMC
     autoload :TunnelHelper,   "#{ROOT}/cli/tunnel_helper"
     autoload :ManifestHelper, "#{ROOT}/cli/manifest_helper"
     autoload :ConsoleHelper,  "#{ROOT}/cli/console_helper"
+    autoload :InfraHelper,    "#{ROOT}/cli/infra_helper"
 
     module Command
       autoload :Base,         "#{ROOT}/cli/commands/base"
