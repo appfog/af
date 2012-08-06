@@ -34,7 +34,7 @@ module VMC::Cli
     def display_provisioned_services_table(services)
       return unless services && !services.empty?
       
-      infra_supported = !services.detect { |a| a[:infra] }.empty?
+      infra_supported = !services.detect { |a| a[:infra] }.nil?
       services_table = table do |t|
         t.headings = 'Name', 'Service'
         t.headings << 'In' if infra_supported
