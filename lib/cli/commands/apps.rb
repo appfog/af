@@ -22,11 +22,18 @@ module VMC::Cli::Command
 
       display "\n"
       return display "No Applications" if apps.nil? || apps.empty?
+      
+      infra_supported = !apps.detect { |a| a[:infra] }.nil?
 
       apps_table = table do |t|
         t.headings = 'Application', '# ', 'Health', 'URLS', 'Services'
+        t.headings << 'In' if infra_supported
         apps.each do |app|
-          t << [app[:name], app[:instances], health(app), app[:uris].join(', '), app[:services].join(', ')]
+          a = [app[:name], app[:instances], health(app), app[:uris].join(', '), app[:services].join(', ')]
+          if infra_supported
+            a << ( app[:infra] ? app[:infra][:provider] : "   " )
+          end
+          t << a  
         end
       end
       display apps_table
@@ -48,6 +55,10 @@ module VMC::Cli::Command
     end
 
     def console(appname, interactive=true)
+
+      app = client.app_info(appname)
+      infra_name = app[:infra] ? app[:infra][:name] : 'aws' # FIXME 
+
       unless defined? Caldecott
         display "To use `vmc rails-console', you must first install Caldecott:"
         display ""
@@ -68,26 +79,27 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      if not tunnel_pushed?
-        display "Deploying tunnel application '#{tunnel_appname}'."
+      if not tunnel_pushed?(infra_name)
+        display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."
         auth = UUIDTools::UUID.random_create.to_s
-        push_caldecott(auth)
-        start_caldecott
+        push_caldecott(auth,infra_name)
+        start_caldecott(infra_name)
       else
-        auth = tunnel_auth
+        auth = tunnel_auth(infra_name)
       end
 
-      if not tunnel_healthy?(auth)
-        display "Redeploying tunnel application '#{tunnel_appname}'."
+
+      if not tunnel_healthy?(auth,infra_name)
+        display "Redeploying tunnel application '#{tunnel_appname(infra_name)}'."
         # We don't expect caldecott not to be running, so take the
         # most aggressive restart method.. delete/re-push
-        client.delete_app(tunnel_appname)
-        invalidate_tunnel_app_info
-        push_caldecott(auth)
-        start_caldecott
+        client.delete_app(tunnel_appname(infra_name))
+        invalidate_tunnel_app_info(infra_name)
+        push_caldecott(auth,infra_name)
+        start_caldecott(infra_name)
       end
 
-      start_tunnel(port, conn_info, auth)
+      start_tunnel(port, conn_info, auth, infra_name)
       wait_for_tunnel_start(port)
       start_local_console(port, appname) if interactive
       port
@@ -894,6 +906,7 @@ module VMC::Cli::Command
     end
 
     def do_push(appname=nil)
+
       unless @app_info || no_prompt
         @manifest = { "applications" => { @path => { "name" => appname } } }
 
@@ -920,6 +933,11 @@ module VMC::Cli::Command
       memswitch = normalize_mem(memswitch) if memswitch
       command = info(:command)
       runtime = info(:runtime)
+      infra = info(:infra)
+
+      if infra
+        err "Infra '#{infra}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra)
+      end
 
       # Check app existing upfront if we have appname
       app_checked = false
@@ -968,7 +986,6 @@ module VMC::Cli::Command
       default_url = "None"
       default_url = "#{appname}.#{VMC::Cli::Config.suggest_url}" if framework.require_url?
 
-
       unless no_prompt || url || !framework.require_url?
         url = ask(
           "Application Deployed URL",
@@ -1015,18 +1032,19 @@ module VMC::Cli::Command
         }
       }
       manifest[:staging][:command] = command if command
-
+      manifest[:infra] = { :provider => infra } if infra
+      
       # Send the manifest to the cloud controller
       client.create_app(appname, manifest)
       display 'OK'.green
 
-
+      
       existing = Set.new(client.services.collect { |s| s[:name] })
 
       if @app_info && services = @app_info["services"]
         services.each do |name, info|
           unless existing.include? name
-            create_service_banner(info["type"], name, true)
+            create_service_banner(info["type"], name, true, infra)
           end
 
           bind_service_banner(name, appname)

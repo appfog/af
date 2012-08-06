@@ -4,7 +4,7 @@ The AppFog CLI. This is the command line interface to AppFog.com
 
 af is based on vmc but will have features specific to the AppFog service as well as having the default target set to AppFog's service
 
-_Copyright 2010-2011, VMware, Inc. Licensed under the
+_Copyright 2010-2012, VMware, Inc. Licensed under the
 MIT license, please see the LICENSE file.  All rights reserved._
 
     Usage: af [options] command [<args>] [command_options]

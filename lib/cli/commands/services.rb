@@ -38,7 +38,7 @@ module VMC::Cli::Command
         name = random_service_name(service)
         picked_name = true
       end
-      create_service_banner(service, name, picked_name)
+      create_service_banner(service, name, picked_name, @options[:infra])
       appname = @options[:bind] unless appname
       bind_service_banner(name, appname) if appname
     end
@@ -118,37 +118,44 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      if not tunnel_pushed?
-        display "Deploying tunnel application '#{tunnel_appname}'."
-        auth = UUIDTools::UUID.random_create.to_s
-        push_caldecott(auth)
-        bind_service_banner(service, tunnel_appname, false)
-        start_caldecott
-      else
-        auth = tunnel_auth
+      infra_name = info[:infra] ? info[:infra][:name] : default_infra
+      
+      if infra_name
+        err "Infra '#{infra_name}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra_name)
       end
 
-      if not tunnel_healthy?(auth)
-        display "Redeploying tunnel application '#{tunnel_appname}'."
+      
+      if not tunnel_pushed?(infra_name)
+        display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."
+        auth = UUIDTools::UUID.random_create.to_s
+        push_caldecott(auth,infra_name)
+        bind_service_banner(service, tunnel_appname(infra_name), false)
+        start_caldecott(infra_name)
+      else
+        auth = tunnel_auth(infra_name)
+      end
+
+      if not tunnel_healthy?(auth,infra_name)
+        display "Redeploying tunnel application '#{tunnel_appname(infra_name)}'."
 
         # We don't expect caldecott not to be running, so take the
         # most aggressive restart method.. delete/re-push
-        client.delete_app(tunnel_appname)
-        invalidate_tunnel_app_info
+        client.delete_app(tunnel_appname(infra_name))
+        invalidate_tunnel_app_info(infra_name)
 
-        push_caldecott(auth)
-        bind_service_banner(service, tunnel_appname, false)
-        start_caldecott
+        push_caldecott(auth,infra_name)
+        bind_service_banner(service, tunnel_appname(infra_name), false)
+        start_caldecott(infra_name)
       end
 
-      if not tunnel_bound?(service)
-        bind_service_banner(service, tunnel_appname)
+      if not tunnel_bound?(service,infra_name)
+        bind_service_banner(service, tunnel_appname(infra_name))
       end
 
-      conn_info = tunnel_connection_info info[:vendor], service, auth
+      conn_info = tunnel_connection_info info[:vendor], service, auth, infra_name
       display_tunnel_connection_info(conn_info)
       display "Starting tunnel to #{service.bold} on port #{port.to_s.bold}."
-      start_tunnel(port, conn_info, auth)
+      start_tunnel(port, conn_info, auth, infra_name)
 
       clients = get_clients_for(info[:vendor])
 
@@ -167,7 +174,7 @@ module VMC::Cli::Command
       else
         wait_for_tunnel_start(port)
         unless start_local_prog(clients, client_name, conn_info, port)
-          err "'#{client_name}' executation failed; is it in your $PATH?"
+          err "'#{client_name}' execution failed; is it in your $PATH?"
         end
       end
     end

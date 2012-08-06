@@ -17,35 +17,33 @@ module VMC::Cli
     # this is to keep the helper in sync with any updates here
     HELPER_VERSION = '0.0.4'
 
-    def tunnel_uniquename
-      random_service_name(tunnel_appname)
+    def tunnel_uniquename(infra)
+      random_service_name(tunnel_appname(infra))
     end
 
-    def tunnel_appname
-      "caldecott"
+    def tunnel_appname(infra)
+      infra ? "caldecott-#{infra}" : "caldecott"
     end
 
-    def tunnel_app_info
-      return @tun_app_info if @tunnel_app_info
+    def tunnel_app_info(infra)
       begin
-        @tun_app_info = client.app_info(tunnel_appname)
+        client.app_info(tunnel_appname(infra))
       rescue => e
-        @tun_app_info = nil
+        nil
       end
     end
 
-    def tunnel_auth
-      tunnel_app_info[:env].each do |e|
+    def tunnel_auth(infra)
+      tunnel_app_info(infra)[:env].each do |e|
         name, val = e.split("=", 2)
         return val if name == "CALDECOTT_AUTH"
       end
       nil
     end
 
-    def tunnel_url
-      return @tunnel_url if @tunnel_url
+    def tunnel_url(infra)
 
-      tun_url = tunnel_app_info[:uris][0]
+      tun_url = tunnel_app_info(infra)[:uris][0]
 
       ["https", "http"].each do |scheme|
         url = "#{scheme}://#{tun_url}"
@@ -57,54 +55,51 @@ module VMC::Cli
 
         # we expect a 404 since this request isn't auth'd
         rescue RestClient::ResourceNotFound
-          return @tunnel_url = url
+          return url
         end
       end
 
       err "Cannot determine URL for #{tun_url}"
     end
 
-    def invalidate_tunnel_app_info
-      @tunnel_url = nil
-      @tunnel_app_info = nil
+    def invalidate_tunnel_app_info(infra)
     end
 
-    def tunnel_pushed?
-      not tunnel_app_info.nil?
+    def tunnel_pushed?(infra)
+      not tunnel_app_info(infra).nil?
     end
 
-    def tunnel_healthy?(token)
-      return false unless tunnel_app_info[:state] == 'STARTED'
+    def tunnel_healthy?(token,infra)
+      return false unless tunnel_app_info(infra)[:state] == 'STARTED'
 
       begin
         response = RestClient.get(
-          "#{tunnel_url}/info",
+          "#{tunnel_url(infra)}/info",
           "Auth-Token" => token
         )
-
         info = JSON.parse(response)
         if info["version"] == HELPER_VERSION
           true
         else
-          stop_caldecott
+          stop_caldecott(infra)
           false
         end
       rescue RestClient::Exception
-        stop_caldecott
+        stop_caldecott(infra)
         false
       end
     end
 
-    def tunnel_bound?(service)
-      tunnel_app_info[:services].include?(service)
+    def tunnel_bound?(service,infra)
+      tunnel_app_info(infra)[:services].include?(service)
     end
 
-    def tunnel_connection_info(type, service, token)
+    def tunnel_connection_info(type, service, token, infra)
       display "Getting tunnel connection info: ", false
       response = nil
       10.times do
         begin
-          response = RestClient.get(tunnel_url + "/" + VMC::Client.path("services", service), "Auth-Token" => token)
+          response = RestClient.get(tunnel_url(infra) + "/" + VMC::Client.path("services", service), "Auth-Token" => token)
           break
         rescue RestClient::Exception
           sleep 1
@@ -120,6 +115,7 @@ module VMC::Cli
       display "OK".green
 
       info = JSON.parse(response)
+      info["infra"] = infra
       case type
       when "rabbitmq"
         uri = Addressable::URI.parse info["url"]
@@ -183,11 +179,11 @@ module VMC::Cli
       display ''
     end
 
-    def start_tunnel(local_port, conn_info, auth)
+    def start_tunnel(local_port, conn_info, auth, infra)
       @local_tunnel_thread = Thread.new do
         Caldecott::Client.start({
           :local_port => local_port,
-          :tun_url => tunnel_url,
+          :tun_url => tunnel_url(infra),
           :dst_host => conn_info['hostname'],
           :dst_port => conn_info['port'],
           :log_file => STDOUT,
@@ -292,33 +288,37 @@ module VMC::Cli
       system(cmdline)
     end
 
-    def push_caldecott(token)
-      client.create_app(
-        tunnel_appname,
-        { :name => tunnel_appname,
-          :staging => {:framework => "sinatra"},
-          :uris => ["#{tunnel_uniquename}.#{target_base}"],
+    def push_caldecott(token,infra)
+      manifest = {
+          :name => tunnel_appname(infra),
+          :staging => {:framework => "sinatra", :runtime => "ruby18" },
+          :uris => ["#{tunnel_uniquename(infra)}.#{VMC::Cli::InfraHelper.base_for_infra(infra)}"],
           :instances => 1,
           :resources => {:memory => 64},
           :env => ["CALDECOTT_AUTH=#{token}"]
         }
+      manifest[:infra] = { :provider => infra } if infra 
+
+      client.create_app(
+        tunnel_appname(infra),
+        manifest
       )
 
-      apps_cmd.send(:upload_app_bits, tunnel_appname, HELPER_APP)
+      apps_cmd.send(:upload_app_bits, tunnel_appname(infra), HELPER_APP)
 
-      invalidate_tunnel_app_info
+      invalidate_tunnel_app_info(infra)
     end
 
-    def stop_caldecott
-      apps_cmd.stop(tunnel_appname)
+    def stop_caldecott(infra)
+      apps_cmd.stop(tunnel_appname(infra))
 
-      invalidate_tunnel_app_info
+      invalidate_tunnel_app_info(infra)
     end
 
-    def start_caldecott
-      apps_cmd.start(tunnel_appname)
+    def start_caldecott(infra)
+      apps_cmd.start(tunnel_appname(infra))
 
-      invalidate_tunnel_app_info
+      invalidate_tunnel_app_info(infra)
     end
 
     private
@@ -328,5 +328,6 @@ module VMC::Cli
       a.client client
       a
     end
+    
   end
 end
