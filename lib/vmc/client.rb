@@ -27,6 +27,9 @@ class VMC::Client
   # Error codes
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
 
+  HTTP_TIMEOUT = ENV['TIMEOUT'].to_i if ENV['TIMEOUT']
+  HTTP_TIMEOUT ||= 10*60
+  
   # Errors
   class BadTarget <  RuntimeError; end
   class AuthError <  RuntimeError; end
@@ -383,7 +386,7 @@ class VMC::Client
     req = {
       :method => method, :url => "#{@target}/#{path}",
       :payload => payload, :headers => headers, :multipart => true,
-      :timeout => 120, :open_timeout => 120
+      :timeout => HTTP_TIMEOUT, :open_timeout => HTTP_TIMEOUT
     }
     status, body, response_headers = perform_http_request(req)
 
