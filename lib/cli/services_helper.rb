@@ -40,7 +40,9 @@ module VMC::Cli
         t.headings << 'In' if infra_supported
         services.each do |service|
           s =  [ service[:name], service[:vendor] ]
-          s << service[:infra][:name] if infra_supported
+          if infra_supported
+            s << ( service[:infra] ? service[:infra][:provider] : "   " )
+          end
           t << s
         end
       end

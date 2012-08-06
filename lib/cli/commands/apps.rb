@@ -31,7 +31,7 @@ module VMC::Cli::Command
         apps.each do |app|
           a = [app[:name], app[:instances], health(app), app[:uris].join(', '), app[:services].join(', ')]
           if infra_supported
-            a << ( app[:infra] ? app[:infra][:name] : "   " )
+            a << ( app[:infra] ? app[:infra][:provider] : "   " )
           end
           t << a  
         end
