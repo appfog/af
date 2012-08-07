@@ -27,8 +27,7 @@ class VMC::Client
   # Error codes
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
 
-  HTTP_TIMEOUT = ENV['TIMEOUT'].to_i if ENV['TIMEOUT']
-  HTTP_TIMEOUT ||= 10*60
+  HTTP_TIMEOUT = ENV['TIMEOUT'] ? ENV['TIMEOUT'].to_i : 10*60
   
   # Errors
   class BadTarget <  RuntimeError; end
