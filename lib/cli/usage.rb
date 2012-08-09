@@ -62,6 +62,9 @@ Currently available af commands are:
     files <appname> [path] [--all]               Display directory listing or file download for [path]
     stats <appname>                              Display resource usage for the application
     instances <appname>                          List application instances
+    
+  Application Download
+    download <appname>                           Downloads the deployed app into <appname>.zip
 
   Application Environment
     env <appname>                                List application environment variables

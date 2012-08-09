@@ -158,6 +158,13 @@ class VMC::Client
     _, body, headers = http_get(url)
     body
   end
+  
+  def app_download(name)
+    check_login_status
+    url = path(VMC::APPS_PATH, name, "application")
+    status, body, headers = http_get(url,'application/octet-stream')
+    File.open("#{name}.zip","w") { |f| f.puts body }
+  end
 
   ######################################################
   # Services
