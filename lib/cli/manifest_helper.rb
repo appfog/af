@@ -82,13 +82,6 @@ module VMC::Cli::ManifestHelper
     name = manifest("name") ||
       set(ask("Application Name", :default => manifest("name")), "name")
 
-    if client.infra_supported? 
-      infra = @options[:infra] || manifest("infra") || 
-        ask("Select Infrastructure",:indexed => true, :choices => VMC::Cli::InfraHelper.infra_names)
-      set infra.dup, "infra"
-      VMC::Cli::Config.infra = infra   
-    end
-
     if manifest "framework"
       framework = VMC::Cli::Framework.lookup_by_framework manifest("framework","name")
     else
@@ -111,6 +104,14 @@ module VMC::Cli::ManifestHelper
     end
     default_command = manifest "command"
     set ask("Start Command", :default => default_command), "command" if framework.require_start_command?
+
+    if client.infra_supported? 
+      infra = @options[:infra] || manifest("infra") || 
+        VMC::Cli::InfraHelper.name_for_description(
+          ask("Select Infrastructure",:indexed => true, :choices => VMC::Cli::InfraHelper.infra_descriptions))
+      set infra.dup, "infra"
+      VMC::Cli::Config.infra = infra   
+    end
 
     url_template = manifest("url") || DEFAULTS["url"]
     url_resolved = url_template.dup
