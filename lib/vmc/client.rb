@@ -215,7 +215,11 @@ class VMC::Client
 
   def bind_service(service, appname)
     check_login_status
+    svc = services.detect { |s| s[:name] == service }
     app = app_info(appname)
+    if infra_supported? && ! infras_match?(app,svc)
+      raise TargetError, "Service #{service} and App #{appname} are not on the same infra"
+    end
     services = app[:services] || []
     app[:services] = services << service
     update_app(appname, app)
@@ -488,4 +492,8 @@ class VMC::Client
     raise AuthError unless @user || logged_in?
   end
 
+  def infras_match?(o1,o2)
+    o1 && o2 && ( o1[:infra] == o2[:infra])
+  end
+  
 end
