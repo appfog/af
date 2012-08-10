@@ -20,6 +20,13 @@ module VMC::Cli::Command
     end
 
     def create_service(service=nil, name=nil, appname=nil)
+      if client.infra_supported?
+        unless no_prompt || @options[:infra]
+          @options[:infra] = ask("Select Infrastructure",
+            :indexed => true, :choices => VMC::Cli::InfraHelper.infra_names)
+        end
+      end
+      
       unless no_prompt || service
         services = client.services_info
         err 'No services available to provision' if services.empty?
