@@ -82,7 +82,12 @@ module VMC::Cli::ManifestHelper
     name = manifest("name") ||
       set(ask("Application Name", :default => manifest("name")), "name")
 
-
+    if client.infra_supported? 
+      infra = @options[:infra] || manifest("infra") || 
+        ask("Select Infrastructure",:indexed => true, :choices => VMC::Cli::InfraHelper.infra_names)
+      set infra.dup, "infra"
+      VMC::Cli::Config.infra = infra   
+    end
 
     if manifest "framework"
       framework = VMC::Cli::Framework.lookup_by_framework manifest("framework","name")

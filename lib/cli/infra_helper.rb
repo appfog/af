@@ -13,6 +13,10 @@ module VMC::Cli
         infra && infras.has_key?(infra)
       end
 
+      def infra_names
+        infras.keys
+      end
+      
       private
       def infras
         { 

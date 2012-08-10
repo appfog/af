@@ -332,6 +332,15 @@ class VMC::Client
     }.join("/")
   end
 
+  ######################################################
+  
+  def infra_supported?
+    # FIXME should get this from proxy
+    target.match /^https?:\/\/api.appfog.com$/
+  end
+    
+
+
   private
 
   def path(*args, &blk)
