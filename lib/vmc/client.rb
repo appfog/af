@@ -163,7 +163,11 @@ class VMC::Client
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
     status, body, headers = http_get(url,'application/octet-stream')
-    File.open("#{name}.zip","w") { |f| f.puts body }
+    file = Tempfile.new(name)
+    file.write(body)
+    file.close
+    ::VMC::Cli::ZipUtil.unpack(file.path, name)
+    file.unlink
   end
 
   ######################################################

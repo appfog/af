@@ -65,7 +65,7 @@ Currently available af commands are:
     instances <appname>                          List application instances
     
   Application Download
-    download <appname>                           Downloads the deployed app into <appname>.zip
+    download <appname>                           Downloads the deployed app source code into a directory called <appname>
 
   Application Environment
     env <appname>                                List application environment variables
