@@ -153,7 +153,7 @@ module VMC::Cli::ManifestHelper
     ), "instances"
 
     unless manifest "services"
-      user_services = client.services
+      user_services = services_for_infra(manifest("infra"))
       user_services.sort! {|a, b| a[:name] <=> b[:name] }
 
       unless user_services.empty?
@@ -269,6 +269,14 @@ module VMC::Cli::ManifestHelper
   end
 
   private
+    def services_for_infra(infra)
+      if client.infra_supported?
+        client.services.select { |s| s[:infra] && s[:infra][:provider] == manifest("infra") }
+      else
+        client.services
+      end
+    end
+    
     def ordered_by_deps(apps, abspaths = nil, processed = Set[])
       unless abspaths
         abspaths = {}
