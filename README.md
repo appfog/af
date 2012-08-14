@@ -22,6 +22,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
 
     Application Creation
       push [appname]                               Create, push, map, and start a new application
+      push [appname] --infra                       Push application to specified infrastructure
       push [appname] --path                        Push application from specified path
       push [appname] --url                         Set the url for the application
       push [appname] --instances <N>               Set the expected number <N> of instances
