@@ -22,6 +22,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
 
     Application Creation
       push [appname]                               Create, push, map, and start a new application
+      push [appname] --infra                       Push application to specified infrastructure
       push [appname] --path                        Push application from specified path
       push [appname] --url                         Set the url for the application
       push [appname] --instances <N>               Set the expected number <N> of instances
@@ -57,6 +58,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
     Services
       services                                     Lists of services available and provisioned
       create-service <service> [--name,--bind]     Create a provisioned service
+      create-service <service> --infra     		   Create a provisioned service on a specified infrastructure
       create-service <service> <name>              Create a provisioned service and assign it <name>
       create-service <service> <name> <app>        Create a provisioned service and assign it <name>, and bind to <app>
       delete-service [servicename]                 Delete a provisioned service
