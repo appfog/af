@@ -80,6 +80,15 @@ module VMC::Cli::Command
       display rtable
     end
 
+    def infras
+      itable = table do |t|
+        t.headings = [ 'Name','Description' ]
+        VMC::Cli::InfraHelper.list.each { |i| t << [i[:name], i[:description]] }
+      end
+      display "\n"
+      display itable
+    end
+
     def frameworks
       raise VMC::Client::AuthError unless client.logged_in?
       return display JSON.pretty_generate(frameworks_info) if @options[:json]

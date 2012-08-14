@@ -82,8 +82,6 @@ module VMC::Cli::ManifestHelper
     name = manifest("name") ||
       set(ask("Application Name", :default => manifest("name")), "name")
 
-
-
     if manifest "framework"
       framework = VMC::Cli::Framework.lookup_by_framework manifest("framework","name")
     else
@@ -106,6 +104,14 @@ module VMC::Cli::ManifestHelper
     end
     default_command = manifest "command"
     set ask("Start Command", :default => default_command), "command" if framework.require_start_command?
+
+    if client.infra_supported? 
+      infra = @options[:infra] || manifest("infra") || 
+        VMC::Cli::InfraHelper.name_for_description(
+          ask("Select Infrastructure",:indexed => true, :choices => VMC::Cli::InfraHelper.infra_descriptions))
+      set infra.dup, "infra"
+      VMC::Cli::Config.infra = infra   
+    end
 
     url_template = manifest("url") || DEFAULTS["url"]
     url_resolved = url_template.dup
@@ -147,7 +153,7 @@ module VMC::Cli::ManifestHelper
     ), "instances"
 
     unless manifest "services"
-      user_services = client.services
+      user_services = services_for_infra(manifest("infra"))
       user_services.sort! {|a, b| a[:name] <=> b[:name] }
 
       unless user_services.empty?
@@ -263,6 +269,14 @@ module VMC::Cli::ManifestHelper
   end
 
   private
+    def services_for_infra(infra)
+      if client.infra_supported?
+        client.services.select { |s| s[:infra] && s[:infra][:provider] == manifest("infra") }
+      else
+        client.services
+      end
+    end
+    
     def ordered_by_deps(apps, abspaths = nil, processed = Set[])
       unless abspaths
         abspaths = {}

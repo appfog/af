@@ -63,6 +63,9 @@ Currently available af commands are:
     files <appname> [path] [--all]               Display directory listing or file download for [path]
     stats <appname>                              Display resource usage for the application
     instances <appname>                          List application instances
+    
+  Application Download
+    download <appname>                           Downloads the deployed app into <appname>.zip
 
   Application Environment
     env <appname>                                List application environment variables
@@ -92,6 +95,7 @@ Currently available af commands are:
   System
     runtimes                                     Display the supported runtimes of the target system
     frameworks                                   Display the recognized frameworks of the target system
+    infras                                       Display the available infrastructures
 
   Micro Cloud Foundry
     micro status                                 Display Micro Cloud Foundry VM status

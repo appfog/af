@@ -186,6 +186,10 @@ class VMC::Cli::Runner
       usage('af frameworks')
       set_cmd(:misc, :frameworks)
 
+    when 'infras'
+      usage('af infras')
+      set_cmd(:misc, :infras)
+
     when 'user'
       usage('af user')
       set_cmd(:user, :info)
@@ -281,7 +285,11 @@ class VMC::Cli::Runner
       else
         set_cmd(:apps, :files, 2)
       end
-
+      
+    when 'download'
+      usage('af download <appname>')
+      set_cmd(:apps, :download, 1)
+    
     when 'logs'
       usage('af logs <appname> [--instance N] [--all] [--prefix]')
       set_cmd(:apps, :logs, 1)

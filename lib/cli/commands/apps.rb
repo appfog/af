@@ -208,7 +208,14 @@ module VMC::Cli::Command
     rescue VMC::Client::NotFound, VMC::Client::TargetError
       err 'No such file or directory'
     end
-
+    
+    def download(appname)
+      banner = "Downloading Application '#{appname}': "
+      display banner, false      
+      client.app_download(appname)
+      display 'OK'.green
+    end
+    
     def logs(appname)
       # Check if we have an app before progressing further
       client.app_info(appname)

@@ -20,6 +20,7 @@ module VMC::Cli::Command
     end
 
     def create_service(service=nil, name=nil, appname=nil)
+
       unless no_prompt || service
         services = client.services_info
         err 'No services available to provision' if services.empty?
@@ -38,6 +39,15 @@ module VMC::Cli::Command
         name = random_service_name(service)
         picked_name = true
       end
+
+      if client.infra_supported?
+        unless no_prompt || @options[:infra]
+          @options[:infra] = VMC::Cli::InfraHelper.name_for_description(
+              ask("Select Infrastructure",
+                :indexed => true, :choices => VMC::Cli::InfraHelper.infra_descriptions))
+        end
+      end
+      
       create_service_banner(service, name, picked_name, @options[:infra])
       appname = @options[:bind] unless appname
       bind_service_banner(name, appname) if appname

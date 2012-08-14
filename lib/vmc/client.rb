@@ -158,6 +158,13 @@ class VMC::Client
     _, body, headers = http_get(url)
     body
   end
+  
+  def app_download(name)
+    check_login_status
+    url = path(VMC::APPS_PATH, name, "application")
+    status, body, headers = http_get(url,'application/octet-stream')
+    File.open("#{name}.zip","w") { |f| f.puts body }
+  end
 
   ######################################################
   # Services
@@ -208,7 +215,11 @@ class VMC::Client
 
   def bind_service(service, appname)
     check_login_status
+    svc = services.detect { |s| s[:name] == service }
     app = app_info(appname)
+    if infra_supported? && ! infras_match?(app,svc)
+      raise TargetError, "Service #{service} and App #{appname} are not on the same infra"
+    end
     services = app[:services] || []
     app[:services] = services << service
     update_app(appname, app)
@@ -324,6 +335,15 @@ class VMC::Client
       URI.encode x.to_s, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]")
     }.join("/")
   end
+
+  ######################################################
+  
+  def infra_supported?
+    # FIXME should get this from proxy
+    target.match /^https?:\/\/api.appfog.com$/
+  end
+    
+
 
   private
 
@@ -472,4 +492,8 @@ class VMC::Client
     raise AuthError unless @user || logged_in?
   end
 
+  def infras_match?(o1,o2)
+    o1 && o2 && ( o1[:infra] == o2[:infra])
+  end
+  
 end
