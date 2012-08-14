@@ -5,6 +5,10 @@ module VMC::Cli
 
     class << self 
 
+      def list
+        infras.values
+      end
+
       def base_for_infra(infra)
         infras.has_key?(infra) ?  infras[infra][:base] : "aws.af.cm"
       end
@@ -25,10 +29,10 @@ module VMC::Cli
       private
       def infras
         { 
-          "ap-aws" => { :base => "ap01.aws.af.cm", :description => "AWS Asia SE - Singapore" },
-          "eu-aws" => { :base => "eu01.aws.af.cm", :description => "AWS EU West - Ireland" },
-          "rs"     => { :base => "rs.af.cm", :description => "Rackspace AZ 1 - Dallas" },
-          "aws"    => { :base => "aws.af.cm", :description => "AWS US East - Virginia" }
+          "ap-aws" => { :name => "ap-aws", :base => "ap01.aws.af.cm", :description => "AWS Asia SE - Singapore" },
+          "eu-aws" => { :name => "eu-aws", :base => "eu01.aws.af.cm", :description => "AWS EU West - Ireland" },
+          "rs"     => { :name => "rs", :base => "rs.af.cm", :description => "Rackspace AZ 1 - Dallas" },
+          "aws"    => { :name => "aws", :base => "aws.af.cm", :description => "AWS US East - Virginia" }
         }
       end
 

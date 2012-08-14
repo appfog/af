@@ -186,6 +186,10 @@ class VMC::Cli::Runner
       usage('af frameworks')
       set_cmd(:misc, :frameworks)
 
+    when 'infras'
+      usage('af infras')
+      set_cmd(:misc, :infras)
+
     when 'user'
       usage('af user')
       set_cmd(:user, :info)

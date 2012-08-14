@@ -93,6 +93,7 @@ Currently available af commands are:
   System
     runtimes                                     Display the supported runtimes of the target system
     frameworks                                   Display the recognized frameworks of the target system
+    infras                                       Display the available infrastructures
 
   Micro Cloud Foundry
     micro status                                 Display Micro Cloud Foundry VM status
