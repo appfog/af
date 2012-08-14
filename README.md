@@ -29,6 +29,9 @@ MIT license, please see the LICENSE file.  All rights reserved._
       push [appname] --mem M                       Set the memory reservation for the application
       push [appname] --no-start                    Do not auto-start the application
 
+    Application Download
+      pull <appname> [path]                        Downloads last pushed source to <appname> or [path]
+
     Application Operations
       start <appname>                              Start the application
       stop  <appname>                              Stop the application
