@@ -107,10 +107,10 @@ module VMC::Cli::ManifestHelper
 
     if client.infra_supported? 
       infra = @options[:infra] || manifest("infra") || 
-        VMC::Cli::InfraHelper.name_for_description(
-          ask("Select Infrastructure",:indexed => true, :choices => VMC::Cli::InfraHelper.infra_descriptions))
+        client.infra_name_for_description(
+          ask("Select Infrastructure",:indexed => true, :choices => client.infra_descriptions))
       set infra.dup, "infra"
-      VMC::Cli::Config.infra = infra   
+      client.infra = infra
     end
 
     url_template = manifest("url") || DEFAULTS["url"]

@@ -292,7 +292,7 @@ module VMC::Cli
       manifest = {
           :name => tunnel_appname(infra),
           :staging => {:framework => "sinatra", :runtime => "ruby18" },
-          :uris => ["#{tunnel_uniquename(infra)}.#{VMC::Cli::InfraHelper.base_for_infra(infra)}"],
+          :uris => ["#{tunnel_uniquename(infra)}.#{client.base_for_infra(infra)}"],
           :instances => 1,
           :resources => {:memory => 64},
           :env => ["CALDECOTT_AUTH=#{token}"]
@@ -304,7 +304,7 @@ module VMC::Cli
         manifest
       )
 
-      apps_cmd.send(:upload_app_bits, tunnel_appname(infra), HELPER_APP)
+      apps_cmd.send(:upload_app_bits, tunnel_appname(infra), HELPER_APP, infra)
 
       invalidate_tunnel_app_info(infra)
     end

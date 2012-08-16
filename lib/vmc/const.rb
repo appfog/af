@@ -12,6 +12,7 @@ module VMC
   INFO_PATH            = 'info'
   GLOBAL_SERVICES_PATH = ['info', 'services']
   GLOBAL_RUNTIMES_PATH = ['info', 'runtimes']
+  GLOBAL_INFRAS_PATH   = ['info', 'infras']
   RESOURCES_PATH       = 'resources'
 
   # User specific paths

@@ -22,7 +22,7 @@ class VMC::Client
   end
 
   attr_reader   :target, :host, :user, :proxy, :auth_token
-  attr_accessor :trace
+  attr_accessor :trace, :infra
 
   # Error codes
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
@@ -345,12 +345,40 @@ class VMC::Client
   end
 
   ######################################################
-  
-  def infra_supported?
-    # FIXME should get this from proxy
-    target.match /^https?:\/\/api.appfog.com$/
+  # Infrastructure
+  ######################################################
+
+  def infras
+    json_get(path(VMC::GLOBAL_INFRAS_PATH))
+  rescue
+    []
   end
-    
+
+  def infra_supported?
+    !infras.empty?
+  end
+
+  def base_for_infra(name)
+    info = infras.detect { |i| i[:infra] == name }
+    info ? info[:base] : "aws.af.cm"
+  end
+
+  def infra_valid?(name) 
+    infras.detect { |i| i[:infra] == name }
+  end
+
+  def infra_descriptions
+    infras.map { |i| i[:description] }
+  end
+  
+  def infra_name_for_description(desc) 
+    info = infras.detect { |i| i[:description] == desc }
+    info ? info[:infra] : ""
+  end
+
+  def suggest_url(infra=nil)
+    @suggest_url ||= base_for_infra(infra || @infra)
+  end
 
 
   private

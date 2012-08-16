@@ -42,9 +42,9 @@ module VMC::Cli::Command
 
       if client.infra_supported?
         unless no_prompt || @options[:infra]
-          @options[:infra] = VMC::Cli::InfraHelper.name_for_description(
+          @options[:infra] = client.infra_name_for_description(
               ask("Select Infrastructure",
-                :indexed => true, :choices => VMC::Cli::InfraHelper.infra_descriptions))
+                :indexed => true, :choices => client.infra_descriptions))
         end
       end
       
@@ -131,7 +131,7 @@ module VMC::Cli::Command
       infra_name = info[:infra] ? info[:infra][:name] : default_infra
       
       if infra_name
-        err "Infra '#{infra_name}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra_name)
+        err "Infra '#{infra_name}' is not valid" unless client.infra_valid?(infra_name)
       end
 
       

@@ -42,10 +42,6 @@ module VMC::Cli
         url.sub(/^[^\.]+\./, "")
       end
 
-      def suggest_url
-        @suggest_url ||= VMC::Cli::InfraHelper.base_for_infra(@infra)
-      end
-
       def store_target(target_host)
         target_file = File.expand_path(TARGET_FILE)
         lock_and_write(target_file, target_host)

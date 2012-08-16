@@ -178,7 +178,7 @@ module VMC::Cli
       end
 
       def target_base(ctx = [])
-        VMC::Cli::Config.base_of(find_symbol("target", ctx) || "api.#{VMC::Cli::Config.suggest_url}")
+        VMC::Cli::Config.base_of(find_symbol("target", ctx) || "api.#{client.suggest_url}")
       end
 
       # Inject a client to help in testing.

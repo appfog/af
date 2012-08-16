@@ -946,7 +946,7 @@ module VMC::Cli::Command
       infra = info(:infra)
 
       if infra
-        err "Infra '#{infra}' is not valid" unless VMC::Cli::InfraHelper.valid?(infra)
+        err "Infra '#{infra}' is not valid" unless client.infra_valid?(infra)
       end
 
       # Check app existing upfront if we have appname
@@ -994,7 +994,7 @@ module VMC::Cli::Command
       command = ask("Start Command") if !command && framework.require_start_command?
 
       default_url = "None"
-      default_url = "#{appname}.#{VMC::Cli::Config.suggest_url}" if framework.require_url?
+      default_url = "#{appname}.#{client.suggest_url(infra)}" if framework.require_url?
 
       unless no_prompt || url || !framework.require_url?
         url = ask(
