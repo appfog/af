@@ -81,9 +81,11 @@ module VMC::Cli::Command
     end
 
     def infras
+      infras_info = client.infras
+      return display "Multiple infras not supported" if infras_info.empty?
       itable = table do |t|
         t.headings = [ 'Name','Description' ]
-        VMC::Cli::InfraHelper.list.each { |i| t << [i[:name], i[:description]] }
+        infras_info.each { |i| t << [i[:infra], i[:description]] }
       end
       display "\n"
       display itable
