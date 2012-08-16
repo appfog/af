@@ -290,14 +290,16 @@ module VMC::Cli::Command
         if @options[:canary]
           display "[--canary] is deprecated and will be removed in a future version".yellow
         end
-        upload_app_bits(appname, @path)
+        infra = app[:infra] ? app[:infra][:provider] : nil
+        upload_app_bits(appname, @path, infra)
         restart appname if app[:state] == 'STARTED'
       else
         each_app do |name|
           display "Updating application '#{name}'..."
 
           app = client.app_info(name)
-          upload_app_bits(name, @application)
+          infra = app[:infra] ? app[:infra][:provider] : nil
+          upload_app_bits(name, @application, infra)
           restart name if app[:state] == 'STARTED'
         end
       end
@@ -419,7 +421,7 @@ module VMC::Cli::Command
       files && files.select { |f| File.socket? f }
     end
 
-    def upload_app_bits(appname, path)
+    def upload_app_bits(appname, path, infra)
       display 'Uploading Application:'
 
       upload_file, file = "#{Dir.tmpdir}/#{appname}.zip", nil
@@ -479,7 +481,8 @@ module VMC::Cli::Command
         # Check to see if the resource check is worth the round trip
         if (total_size > (64*1024)) # 64k for now
           # Send resource fingerprints to the cloud controller
-          appcloud_resources = client.check_resources(fingerprints)
+          # FIXME  where do I get infra?
+          appcloud_resources = client.check_resources(fingerprints,infra)
         end
         display 'OK'.green
 
@@ -1059,7 +1062,7 @@ module VMC::Cli::Command
       end
 
       # Stage and upload the app bits.
-      upload_app_bits(appname, @application)
+      upload_app_bits(appname, @application, infra)
 
       start(appname, true) unless no_start
     end

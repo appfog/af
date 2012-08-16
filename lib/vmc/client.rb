@@ -247,9 +247,13 @@ class VMC::Client
   # indicating what is needed. This returned manifest should be
   # sent in with the upload if resources were removed.
   # E.g. [{:sha1 => xxx, :size => xxx, :fn => filename}]
-  def check_resources(resources)
+  def check_resources(resources,infra=nil)
     check_login_status
-    status, body, headers = json_post(VMC::RESOURCES_PATH, resources)
+    url = VMC::RESOURCES_PATH
+    unless infra.nil?
+      url += "?infra=#{infra}"
+    end
+    status, body, headers = json_post(url, resources)
     json_parse(body)
   end
 
