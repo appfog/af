@@ -286,10 +286,14 @@ class VMC::Cli::Runner
         set_cmd(:apps, :files, 2)
       end
       
-    when 'download'
-      usage('af download <appname>')
-      set_cmd(:apps, :download, 1)
-    
+    when 'pull'
+      usage('af pull <appname> [path]')
+      if @args.size == 1
+        set_cmd(:apps, :pull, 1)
+      else
+        set_cmd(:apps, :pull, 2)
+      end
+
     when 'logs'
       usage('af logs <appname> [--instance N] [--all] [--prefix]')
       set_cmd(:apps, :logs, 1)

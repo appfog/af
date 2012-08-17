@@ -209,10 +209,11 @@ module VMC::Cli::Command
       err 'No such file or directory'
     end
     
-    def download(appname)
-      banner = "Downloading Application '#{appname}': "
+    def pull(appname, path=nil)
+      path = File.expand_path(path || appname)
+      banner = "Pulling last pushed source code: "
       display banner, false      
-      client.app_download(appname)
+      client.app_pull(appname, path)
       display 'OK'.green
     end
     

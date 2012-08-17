@@ -159,14 +159,14 @@ class VMC::Client
     body
   end
   
-  def app_download(name)
+  def app_pull(name, dir)
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
     status, body, headers = http_get(url,'application/octet-stream')
     file = Tempfile.new(name)
     file.write(body)
     file.close
-    ::VMC::Cli::ZipUtil.unpack(file.path, name)
+    ::VMC::Cli::ZipUtil.unpack(file.path, dir)
     file.unlink
   end
 
