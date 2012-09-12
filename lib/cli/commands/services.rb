@@ -93,7 +93,28 @@ module VMC::Cli::Command
       services.each { |service| bind_service_banner(service, dest_app, false) }
       check_app_for_restart(dest_app)
     end
-
+    
+    def export_service(service)
+      display "Exporting data from '#{service}': ", false    
+      export_info = client.export_service(service)
+      if export_info
+        display 'OK'.green
+        puts export_info[:uri]
+      else
+        err "Export data from '#{service}': failed"
+      end
+    end
+    
+    def import_service(service,url)
+      display "Importing data into '#{service}': ", false
+      import_info = client.import_service(service,url)
+      if import_info
+        display 'OK'.green
+      else
+        err "Import data into '#{service}' failed"
+      end
+    end
+    
     def tunnel(service=nil, client_name=nil)
       unless defined? Caldecott
         display "To use `af tunnel', you must first install Caldecott:"

@@ -237,6 +237,14 @@ class VMC::Client
     app[:services] = services
     update_app(appname, app)
   end
+  
+  def export_service(service)
+    json_get(path(VMC::SERVICE_EXPORT_PATH, service))
+  end
+  
+  def import_service(service,uri)
+    json_post(path(VMC::SERVICE_IMPORT_PATH, service),{uri:uri})
+  end
 
   ######################################################
   # Resources
