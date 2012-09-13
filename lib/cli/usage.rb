@@ -48,6 +48,7 @@ Currently available af commands are:
     stop  <appname>                              Stop the application
     restart <appname> [--debug [MODE]]           Restart the application
     delete <appname>                             Delete the application
+    clone <src-app> [<dest-app> [infra]]         Clone the application and services
 
   Application Updates
     update <appname> [--path,--debug [MODE]]     Update the application bits
@@ -66,6 +67,7 @@ Currently available af commands are:
     
   Application Download
     pull <appname> [path]                        Downloads last pushed source to <appname> or [path]
+    download <appname> [path]                    Downloads last pushed source to zipfile
 
   Application Environment
     env <appname>                                List application environment variables

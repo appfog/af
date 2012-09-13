@@ -208,6 +208,14 @@ module VMC::Cli::Command
     rescue VMC::Client::NotFound, VMC::Client::TargetError
       err 'No such file or directory'
     end
+
+    def download(appname, path=nil)
+      path = File.expand_path(path || "#{appname}.zip" )
+      banner = "Downloading last pushed source code to #{path}: "
+      display banner, false      
+      client.app_download(appname, path)
+      display 'OK'.green
+    end
     
     def pull(appname, path=nil)
       path = File.expand_path(path || appname)
@@ -215,6 +223,39 @@ module VMC::Cli::Command
       display banner, false      
       client.app_pull(appname, path)
       display 'OK'.green
+    end
+    
+    def clone(src_appname, dest_appname=nil, dest_infra=nil)
+      # FIXME make sure dest_appname does not exist
+      # FIXME generate dest appname uris
+      uris = [ "foobar.vcap.me" ]
+      
+      display "Cloning '#{src_appname}' to '#{dest_appname}': ", false
+      Dir.mktmpdir do |dir|
+        zip_path = File.join(dir,src_appname)
+        pull(src_appname,zip_path)
+
+        app = client.app_info(src_appname)
+        
+        manifest = {
+          :name => "#{dest_appname}",
+          :staging => app[:staging],
+          :uris => uris,
+          :instances => app[:instances],
+          :resources => app[:resources]
+        }
+        manifest[:staging][:command] = app[:staging][:command] if app[:staging][:command]
+        manifest[:infra] = dest_infra if dest_infra
+         
+        client.create_app(dest_appname, manifest)      
+        
+        # Stage and upload the app bits.
+        upload_app_bits(dest_appname, zip_path, dest_infra)
+
+        no_start = false # FIXME init this from command line
+        start(dest_appname, true) unless no_start  
+        
+      end
     end
     
     def logs(appname)

@@ -159,6 +159,15 @@ class VMC::Client
     body
   end
   
+  def app_download(name,path)
+    check_login_status
+    url = path(VMC::APPS_PATH, name, "application")
+    status, body, headers = http_get(url,'application/octet-stream')
+    file = File.new(path,"w")
+    file.write(body)
+    file.close
+  end
+  
   def app_pull(name, dir)
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
