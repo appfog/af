@@ -12,7 +12,9 @@ describe 'VMC::Cli::ConsoleHelper' do
   it 'should return connection info for apps that have a console ip and port' do
     @client.should_receive(:app_info).with("foo").and_return(:staging=>{:model=>'rails3'})
     @client.should_receive(:app_instances).with("foo").and_return({:instances=>[{:console_ip=>'192.168.1.1', :console_port=>3344}]})
-    console_connection_info('foo').should == {'hostname'=>'192.168.1.1','port'=>3344,'infra'=>'aws'}
+    foo_info = console_connection_info('foo')
+    foo_info['hostname'].should == '192.168.1.1'
+    foo_info['port'].should == 3344
   end
 
   it 'should output a message when no app instances found' do
