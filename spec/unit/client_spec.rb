@@ -263,6 +263,9 @@ describe 'VMC::Client' do
     app_path = "#{@local_target}/#{VMC::APPS_PATH}/foo"
     stub_request(:get, app_path).to_return(File.new(spec_asset('app_info.txt')))
     stub_request(:put, app_path)
+    services_path = "#{@local_target}/#{VMC::SERVICES_PATH}"
+    # XXX - client only tests that we are not referencing a known service on another infrastructure.
+    stub_request(:get, services_path).to_return(File.new(spec_asset('service_listings.txt')))
     client = VMC::Client.new(@local_target, @auth_token)
     client.bind_service('my-redis', 'foo')
     a_request(:get, app_path).should have_been_made.once
