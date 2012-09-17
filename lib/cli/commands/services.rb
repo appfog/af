@@ -149,12 +149,11 @@ module VMC::Cli::Command
 
       raise VMC::Client::AuthError unless client.logged_in?
 
-      infra_name = info[:infra] ? info[:infra][:name] : default_infra
-      
-      if infra_name
+      infra_name = nil
+      if client.infra_supported?
+        infra_name = info[:infra] ? info[:infra][:name] : default_infra
         err "Infra '#{infra_name}' is not valid" unless client.infra_valid?(infra_name)
       end
-
       
       if not tunnel_pushed?(infra_name)
         display "Deploying tunnel application '#{tunnel_appname(infra_name)}'."

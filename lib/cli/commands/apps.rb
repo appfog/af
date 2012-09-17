@@ -226,8 +226,11 @@ module VMC::Cli::Command
     end
     
     def clone(src_appname, dest_appname=nil, dest_infra=nil)
-      # FIXME make sure dest_appname does not exist
+      
+      err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
+      
       # FIXME generate dest appname uris
+
       uris = [ "foobar.vcap.me" ]
       
       display "Cloning '#{src_appname}' to '#{dest_appname}': ", false
@@ -252,6 +255,31 @@ module VMC::Cli::Command
         # Stage and upload the app bits.
         upload_app_bits(dest_appname, zip_path, dest_infra)
 
+        # Clone services
+        client.services.select { |s| app[:services].include?(s[:name])}.each do |service|
+          display "Exporting data from #{service[:name]}: ", false
+          export_info = client.export_service(service[:name])
+          if export_info
+            display 'OK'.green
+          else
+            err "Export data from '#{service}': failed"
+          end
+          cloned_service_name = "#{service[:name]}-clone"
+          display "Creating service #{cloned_service_name}: ", false
+          client.create_service(dest_infra, service[:vendor], cloned_service_name)
+          display 'OK'.green
+          display "Binding service #{cloned_service_name}: ", false
+          client.bind_service(cloned_service_name, dest_appname)
+          display 'OK'.green
+          display "Importing data to #{cloned_service_name}: ", false
+          import_info = client.import_service(cloned_service_name,export_info[:uri])
+          if import_info
+            display 'OK'.green
+          else
+            err "Import data into '#{service}' failed"
+          end          
+        end
+        
         no_start = false # FIXME init this from command line
         start(dest_appname, true) unless no_start  
         
@@ -987,7 +1015,7 @@ module VMC::Cli::Command
       runtime = info(:runtime)
       infra = info(:infra)
 
-      if infra
+      if client.infra_supported? && infra
         err "Infra '#{infra}' is not valid" unless client.infra_valid?(infra)
       end
 

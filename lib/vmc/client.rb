@@ -163,7 +163,7 @@ class VMC::Client
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
     status, body, headers = http_get(url,'application/octet-stream')
-    file = File.new(path,"w")
+    file = File.new(path,"wb")
     file.write(body)
     file.close
   end
@@ -173,6 +173,7 @@ class VMC::Client
     url = path(VMC::APPS_PATH, name, "application")
     status, body, headers = http_get(url,'application/octet-stream')
     file = Tempfile.new(name)
+    file.binmode
     file.write(body)
     file.close
     ::VMC::Cli::ZipUtil.unpack(file.path, dir)
