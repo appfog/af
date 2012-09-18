@@ -228,27 +228,37 @@ module VMC::Cli::Command
     def clone(src_appname, dest_appname=nil, dest_infra=nil)
       
       err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
-      
-      # FIXME generate dest appname uris
 
-      uris = [ "foobar.vcap.me" ]
+      app = client.app_info(src_appname)
       
-      display "Cloning '#{src_appname}' to '#{dest_appname}': ", false
+      if client.infra_supported? 
+        dest_infra = @options[:infra] || client.infra_name_for_description(
+            ask("Select Infrastructure",:indexed => true, :choices => client.infra_descriptions))
+        client.infra = dest_infra
+      end
+
+      url_template = "#{dest_appname}.${target-base}"
+      url_resolved = url_template.dup
+      resolve_lexically(url_resolved)
+
+      url = @options[:url] || ask("Application Deployed URL", :default => url_resolved)
+
+
       Dir.mktmpdir do |dir|
         zip_path = File.join(dir,src_appname)
         pull(src_appname,zip_path)
 
-        app = client.app_info(src_appname)
+        display "Cloning '#{src_appname}' to '#{dest_appname}': "
         
         manifest = {
           :name => "#{dest_appname}",
           :staging => app[:staging],
-          :uris => uris,
+          :uris => [ url ],
           :instances => app[:instances],
           :resources => app[:resources]
         }
         manifest[:staging][:command] = app[:staging][:command] if app[:staging][:command]
-        manifest[:infra] = dest_infra if dest_infra
+        manifest[:infra] = { :provider => dest_infra } if dest_infra
          
         client.create_app(dest_appname, manifest)      
         

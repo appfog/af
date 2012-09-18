@@ -101,7 +101,10 @@ module VMC::Cli
         begin
           response = RestClient.get(tunnel_url(infra) + "/" + VMC::Client.path("services", service), "Auth-Token" => token)
           break
-        rescue RestClient::Exception
+        rescue RestClient::Exception => e
+          puts "Error infra: #{infra}, url: #{tunnel_url(infra)}"
+          display tunnel_url(infra)
+          puts e.message.red
           sleep 1
         end
 

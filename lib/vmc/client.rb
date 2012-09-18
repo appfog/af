@@ -378,9 +378,14 @@ class VMC::Client
 
   def base_for_infra(name)
     info = infras.detect { |i| i[:infra] == name }
-    info ? info[:base] : "aws.af.cm"
+    info ? info[:base] : default_base
   end
 
+  def default_base
+    return "vcap.me" if @target =~ /https?:\/\/api.vcap.me/
+    "aws.af.cm"
+  end
+  
   def infra_valid?(name) 
     infras.detect { |i| i[:infra] == name }
   end
