@@ -274,7 +274,7 @@ module VMC::Cli::Command
           else
             err "Export data from '#{service}': failed"
           end
-          cloned_service_name = "#{service[:name]}-clone"
+          cloned_service_name = generate_cloned_service_name(src_appname,dest_appname,service[:name],dest_infra)
           display "Creating service #{cloned_service_name}: ", false
           client.create_service(dest_infra, service[:vendor], cloned_service_name)
           display 'OK'.green
@@ -290,7 +290,7 @@ module VMC::Cli::Command
           end          
         end
         
-        no_start = false # FIXME init this from command line
+        no_start = @options[:nostart]
         start(dest_appname, true) unless no_start  
         
       end
