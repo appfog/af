@@ -225,12 +225,14 @@ module VMC::Cli::Command
       display 'OK'.green
     end
     
-    def clone(src_appname, dest_appname=nil, dest_infra=nil)
+    def clone(src_appname, dest_appname, dest_infra=nil)
+      
+      # FIXME need to ask for dest_appname if nil
       
       err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
 
       app = client.app_info(src_appname)
-      
+
       if client.infra_supported? 
         dest_infra = @options[:infra] || client.infra_name_for_description(
             ask("Select Infrastructure",:indexed => true, :choices => client.infra_descriptions))
@@ -242,7 +244,6 @@ module VMC::Cli::Command
       resolve_lexically(url_resolved)
 
       url = @options[:url] || ask("Application Deployed URL", :default => url_resolved)
-
 
       Dir.mktmpdir do |dir|
         zip_path = File.join(dir,src_appname)

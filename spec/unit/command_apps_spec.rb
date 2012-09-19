@@ -244,4 +244,48 @@ describe 'VMC::Cli::Command::Apps' do
 
   end
 
+  it 'should clone an app' do
+
+    @client = VMC::Client.new(@local_target, @auth_token)
+
+    login_path = "#{@local_target}/users/#{@user}/tokens"
+    stub_request(:post, login_path).to_return(File.new(spec_asset('login_success.txt')))
+    info_path = "#{@local_target}/#{VMC::INFO_PATH}"
+    stub_request(:get, info_path).to_return(File.new(spec_asset('info_authenticated.txt')))
+
+    options = {
+      :url => 'bar.vcap.me',
+      :nostart => true
+    }
+    command = VMC::Cli::Command::Apps.new(options)
+    command.client(@client)
+    
+    services_path = "#{@local_target}/#{VMC::SERVICES_PATH}"
+    stub_request(:get,services_path).to_return(:body=>"[]")
+
+    apps_path = "#{@local_target}/#{VMC::APPS_PATH}"
+    stub_request(:post, apps_path)
+    
+    src_app_path = "#{@local_target}/#{VMC::APPS_PATH}/foo"
+    stub_request(:get, src_app_path).to_return(File.new(spec_asset('standalone_app_info.txt')))
+    app_download_path = "#{@local_target}/#{VMC::APPS_PATH}/foo/application"
+    stub_request(:get, app_download_path).to_return(:status => 200,
+      :body => File.new(spec_asset('tests/standalone/java_app/target/zip/standalone-java-app-1.0.0.BUILD-SNAPSHOT-jar.zip')).binmode)
+    
+    dest_app_path = "#{@local_target}/#{VMC::APPS_PATH}/bar"
+    stub_request(:get, dest_app_path).to_return(File.new(spec_asset('app_not_found.txt')))
+
+    app_upload_path = "#{@local_target}/#{VMC::APPS_PATH}/bar/application"
+    stub_request(:post, app_upload_path)
+    
+    command.clone('foo','bar','rs')
+    a_request(:post, apps_path).should have_been_made.once # to create the clone
+    a_request(:post, app_upload_path).should have_been_made.once # to upload the code
+      
+  end
+  
+  it 'should clone services for an app' do
+    pending
+  end
+  
 end

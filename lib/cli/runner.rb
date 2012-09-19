@@ -391,8 +391,7 @@ class VMC::Cli::Runner
       set_cmd(:services, :import_service, 2)
       
     when 'clone'
-      usage('af clone <src-app> [<dest-app> [<infra>]]')
-      set_cmd(:apps, :clone, 1) if @args.size == 1
+      usage('af clone <src-app> <dest-app> [<infra>]')
       set_cmd(:apps, :clone, 2) if @args.size == 2
       set_cmd(:apps, :clone, 3) if @args.size == 3
       

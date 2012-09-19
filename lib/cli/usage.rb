@@ -48,7 +48,7 @@ Currently available af commands are:
     stop  <appname>                              Stop the application
     restart <appname> [--debug [MODE]]           Restart the application
     delete <appname>                             Delete the application
-    clone <src-app> [<dest-app> [infra]]         Clone the application and services
+    clone <src-app> <dest-app> [infra]           Clone the application and services
 
   Application Updates
     update <appname> [--path,--debug [MODE]]     Update the application bits
