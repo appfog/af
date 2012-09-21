@@ -159,11 +159,21 @@ class VMC::Client
     body
   end
   
+  def app_download(name,path)
+    check_login_status
+    url = path(VMC::APPS_PATH, name, "application")
+    status, body, headers = http_get(url,'application/octet-stream')
+    file = File.new(path,"wb")
+    file.write(body)
+    file.close
+  end
+  
   def app_pull(name, dir)
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
     status, body, headers = http_get(url,'application/octet-stream')
     file = Tempfile.new(name)
+    file.binmode
     file.write(body)
     file.close
     ::VMC::Cli::ZipUtil.unpack(file.path, dir)
@@ -236,6 +246,14 @@ class VMC::Client
     services.delete(service)
     app[:services] = services
     update_app(appname, app)
+  end
+  
+  def export_service(service)
+    json_get(path(VMC::SERVICE_EXPORT_PATH, service))
+  end
+  
+  def import_service(service,uri)
+    json_post(path(VMC::SERVICE_IMPORT_PATH, service),{uri:uri})
   end
 
   ######################################################
@@ -360,9 +378,14 @@ class VMC::Client
 
   def base_for_infra(name)
     info = infras.detect { |i| i[:infra] == name }
-    info ? info[:base] : "aws.af.cm"
+    info ? info[:base] : default_base
   end
 
+  def default_base
+    return "vcap.me" if @target =~ /https?:\/\/api.vcap.me/
+    "aws.af.cm"
+  end
+  
   def infra_valid?(name) 
     infras.detect { |i| i[:infra] == name }
   end

@@ -286,6 +286,14 @@ class VMC::Cli::Runner
         set_cmd(:apps, :files, 2)
       end
       
+    when 'download'
+      usage('af download <appname> [path]')
+      if @args.size == 1
+        set_cmd(:apps, :download, 1)
+      else
+        set_cmd(:apps, :download, 2)
+      end
+      
     when 'pull'
       usage('af pull <appname> [path]')
       if @args.size == 1
@@ -374,6 +382,19 @@ class VMC::Cli::Runner
       usage('af clone-services <src-app> <dest-app>')
       set_cmd(:services, :clone_services, 2)
 
+    when 'export-service'
+      usage('af export-service <service-name>')
+      set_cmd(:services, :export_service, 1)
+      
+    when 'import-service'
+      usage('af import-service <service-name> <url>')
+      set_cmd(:services, :import_service, 2)
+      
+    when 'clone'
+      usage('af clone <src-app> <dest-app> [<infra>]')
+      set_cmd(:apps, :clone, 2) if @args.size == 2
+      set_cmd(:apps, :clone, 3) if @args.size == 3
+      
     when 'aliases'
       usage('af aliases')
       set_cmd(:misc, :aliases)

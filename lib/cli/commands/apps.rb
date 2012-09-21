@@ -208,6 +208,14 @@ module VMC::Cli::Command
     rescue VMC::Client::NotFound, VMC::Client::TargetError
       err 'No such file or directory'
     end
+
+    def download(appname, path=nil)
+      path = File.expand_path(path || "#{appname}.zip" )
+      banner = "Downloading last pushed source code to #{path}: "
+      display banner, false      
+      client.app_download(appname, path)
+      display 'OK'.green
+    end
     
     def pull(appname, path=nil)
       path = File.expand_path(path || appname)
@@ -215,6 +223,78 @@ module VMC::Cli::Command
       display banner, false      
       client.app_pull(appname, path)
       display 'OK'.green
+    end
+    
+    def clone(src_appname, dest_appname, dest_infra=nil)
+      
+      # FIXME need to ask for dest_appname if nil
+      
+      err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
+
+      app = client.app_info(src_appname)
+
+      if client.infra_supported? 
+        dest_infra = @options[:infra] || client.infra_name_for_description(
+            ask("Select Infrastructure",:indexed => true, :choices => client.infra_descriptions))
+        client.infra = dest_infra
+      end
+
+      url_template = "#{dest_appname}.${target-base}"
+      url_resolved = url_template.dup
+      resolve_lexically(url_resolved)
+
+      url = @options[:url] || ask("Application Deployed URL", :default => url_resolved)
+
+      Dir.mktmpdir do |dir|
+        zip_path = File.join(dir,src_appname)
+        pull(src_appname,zip_path)
+
+        display "Cloning '#{src_appname}' to '#{dest_appname}': "
+        
+        manifest = {
+          :name => "#{dest_appname}",
+          :staging => app[:staging],
+          :uris => [ url ],
+          :instances => app[:instances],
+          :resources => app[:resources]
+        }
+        manifest[:staging][:command] = app[:staging][:command] if app[:staging][:command]
+        manifest[:infra] = { :provider => dest_infra } if dest_infra
+         
+        client.create_app(dest_appname, manifest)      
+        
+        # Stage and upload the app bits.
+        upload_app_bits(dest_appname, zip_path, dest_infra)
+
+        # Clone services
+        client.services.select { |s| app[:services].include?(s[:name])}.each do |service|
+          display "Exporting data from #{service[:name]}: ", false
+          export_info = client.export_service(service[:name])
+          if export_info
+            display 'OK'.green
+          else
+            err "Export data from '#{service}': failed"
+          end
+          cloned_service_name = generate_cloned_service_name(src_appname,dest_appname,service[:name],dest_infra)
+          display "Creating service #{cloned_service_name}: ", false
+          client.create_service(dest_infra, service[:vendor], cloned_service_name)
+          display 'OK'.green
+          display "Binding service #{cloned_service_name}: ", false
+          client.bind_service(cloned_service_name, dest_appname)
+          display 'OK'.green
+          display "Importing data to #{cloned_service_name}: ", false
+          import_info = client.import_service(cloned_service_name,export_info[:uri])
+          if import_info
+            display 'OK'.green
+          else
+            err "Import data into '#{service}' failed"
+          end          
+        end
+        
+        no_start = @options[:nostart]
+        start(dest_appname, true) unless no_start  
+        
+      end
     end
     
     def logs(appname)
@@ -946,7 +1026,7 @@ module VMC::Cli::Command
       runtime = info(:runtime)
       infra = info(:infra)
 
-      if infra
+      if client.infra_supported? && infra
         err "Infra '#{infra}' is not valid" unless client.infra_valid?(infra)
       end
 

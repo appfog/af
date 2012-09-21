@@ -19,5 +19,9 @@ module VMC
   APPS_PATH            = 'apps'
   SERVICES_PATH        = 'services'
   USERS_PATH           = 'users'
+  
+  # Service paths
+  SERVICE_EXPORT_PATH  = ['services','export']
+  SERVICE_IMPORT_PATH  = ['services','import']
 
 end

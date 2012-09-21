@@ -80,6 +80,19 @@ module VMC::Cli
       r = "%04x" % [rand(0x0100000)]
       "#{service.to_s}-#{r}"
     end
+    
+    def generate_cloned_service_name(src_appname,dest_appname,src_servicename,dest_infra)
+      r = "%04x" % [rand(0x0100000)]
+      dest_servicename = src_servicename.sub(src_appname,dest_appname).sub(/-\h{4,5}/,"-#{r}")
+      if src_servicename == dest_servicename
+        if dest_infra
+          dest_servicename = "#{dest_servicename}-#{dest_infra}"
+        else
+          dest_servicename = "#{dest_servicename}-#{r}"
+        end
+      end
+      dest_servicename
+    end
 
     def check_app_for_restart(appname)
       app = client.app_info(appname)

@@ -48,6 +48,7 @@ Currently available af commands are:
     stop  <appname>                              Stop the application
     restart <appname> [--debug [MODE]]           Restart the application
     delete <appname>                             Delete the application
+    clone <src-app> <dest-app> [infra]           Clone the application and services
 
   Application Updates
     update <appname> [--path,--debug [MODE]]     Update the application bits
@@ -66,6 +67,7 @@ Currently available af commands are:
     
   Application Download
     pull <appname> [path]                        Downloads last pushed source to <appname> or [path]
+    download <appname> [path]                    Downloads last pushed source to zipfile
 
   Application Environment
     env <appname>                                List application environment variables
@@ -75,13 +77,15 @@ Currently available af commands are:
   Services
     services                                     Lists of services available and provisioned
     create-service <service> [--name,--bind]     Create a provisioned service
-    create-service <service> --infra     		 Create a provisioned service on a specified infrastructure
+    create-service <service> --infra     		     Create a provisioned service on a specified infrastructure
     create-service <service> <name>              Create a provisioned service and assign it <name>
     create-service <service> <name> <app>        Create a provisioned service and assign it <name>, and bind to <app>
     delete-service [servicename]                 Delete a provisioned service
     bind-service <servicename> <appname>         Bind a service to an application
     unbind-service <servicename> <appname>       Unbind service from the application
     clone-services <src-app> <dest-app>          Clone service bindings from <src-app> application to <dest-app>
+    export-service <service>                     Export the data from a service
+    import-service <service> <url>               Import data into a service
     tunnel <servicename> [--port]                Create a local tunnel to a service
     tunnel <servicename> <clientcmd>             Create a local tunnel to a service and start a local client
 
