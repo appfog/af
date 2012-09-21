@@ -253,7 +253,7 @@ class VMC::Client
   end
   
   def import_service(service,uri)
-    json_post(path(VMC::SERVICE_IMPORT_PATH, service),{uri:uri})
+    json_post(path(VMC::SERVICE_IMPORT_PATH, service),{:uri => uri})
   end
 
   ######################################################

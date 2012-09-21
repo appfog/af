@@ -83,7 +83,7 @@ module VMC::Cli
     
     def generate_cloned_service_name(src_appname,dest_appname,src_servicename,dest_infra)
       r = "%04x" % [rand(0x0100000)]
-      dest_servicename = src_servicename.sub(src_appname,dest_appname).sub(/-\h{4,5}/,"-#{r}")
+      dest_servicename = src_servicename.sub(src_appname,dest_appname).sub(/-[0-9A-Fa-f]{4,5}/,"-#{r}")
       if src_servicename == dest_servicename
         if dest_infra
           dest_servicename = "#{dest_servicename}-#{dest_infra}"
