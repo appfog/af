@@ -14,6 +14,7 @@ module VMC::Cli::Command
     include VMC::Cli::ManifestHelper
     include VMC::Cli::TunnelHelper
     include VMC::Cli::ConsoleHelper
+    include VMC::Cli::FileHelper
 
     def list
       apps = client.apps
@@ -501,7 +502,7 @@ module VMC::Cli::Command
       files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
       files && files.select { |f| File.socket? f }
     end
-
+    
     def upload_app_bits(appname, path, infra)
       display 'Uploading Application:'
 
@@ -533,7 +534,9 @@ module VMC::Cli::Command
 
             # Do not process .git files
             files.delete('.git') if files
-
+            
+            files = afignore("#{path}/.afignore",files)
+            
             FileUtils.cp_r(files, explode_dir)
 
             find_sockets(explode_dir).each do |s|
