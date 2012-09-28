@@ -19,6 +19,17 @@ describe 'VMC::Cli::Framework' do
     framework(get_war_file(app), true).to_s.should =~ /Java Web/
   end
 
+  it 'should be able to detect an exploded JBoss web app' do
+    app = spec_asset('tests/java_ee/jboss-test/target')
+    framework(app).to_s.should =~ /JBoss/
+  end
+
+  it 'should be able to detect an JBoss web app from a war file' do
+    app = spec_asset('tests/java_ee/jboss-test/target')
+    framework(get_war_file(app), true).to_s.should =~ /JBoss/
+  end
+
+
   it 'should be able to detect a Spring web app war' do
     app = spec_asset('tests/spring/roo-guestbook/target')
     framework(app).to_s.should =~ /Spring/

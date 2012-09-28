@@ -1,3 +1,6 @@
 [submodule "spec/assets/tests"]
 	path = spec/assets/tests
-	url = https://github.com/cloudfoundry/vcap-test-assets.git
+	url = /Users/pote/code/appfog/vcap-test-assets/
+[submodule "spec/assets/tests2"]
+	path = spec/assets/tests2
+	url = /Users/pote/code/appfog/vcap-test-assets/

@@ -6,21 +6,24 @@ module VMC::Cli
     DEFAULT_MEM = '256M'
 
     FRAMEWORKS = {
-      'Rails'    => ['rails3',  { :mem => '256M', :description => 'Rails Application', :console=>true}],
-      'Spring'   => ['spring',  { :mem => '512M', :description => 'Java SpringSource Spring Application'}],
-      'Grails'   => ['grails',  { :mem => '512M', :description => 'Java SpringSource Grails Application'}],
-      'Lift'   =>   ['lift',    { :mem => '512M', :description => 'Scala Lift Application'}],
-      'JavaWeb'  => ['java_web',{ :mem => '512M', :description => 'Java Web Application'}],
-      'Standalone'     => ['standalone',    { :mem => '64M', :description => 'Standalone Application'}],
-      'Sinatra'  => ['sinatra', { :mem => '128M', :description => 'Sinatra Application'}],
-      'Node'     => ['node',    { :mem => '64M',  :description => 'Node.js Application'}],
-      'PHP'      => ['php',     { :mem => '128M', :description => 'PHP Application'}],
-      'Erlang/OTP Rebar' => ['otp_rebar',  { :mem => '64M',  :description => 'Erlang/OTP Rebar Application'}],
-      'WSGI'     => ['wsgi',    { :mem => '64M',  :description => 'Python WSGI Application'}],
-      'Django'   => ['django',  { :mem => '128M', :description => 'Python Django Application'}],
-      'dotNet'   => ['dotNet',  { :mem => '128M', :description => '.Net Web Application'}],
-      'Rack'     => ['rack', { :mem => '128M', :description => 'Rack Application'}],
-      'Play'     => ['play',  { :mem => '256M', :description => 'Play Framework Application'}]
+      'Rails'            => ['rails3',        { :mem => '256M', :description => 'Rails Application', :console=>true}],
+      'Spring'           => ['spring',        { :mem => '512M', :description => 'Java SpringSource Spring Application'}],
+      'Grails'           => ['grails',        { :mem => '512M', :description => 'Java SpringSource Grails Application'}],
+      'Lift'             => ['lift',          { :mem => '512M', :description => 'Scala Lift Application'}],
+      'JavaWeb'          => ['java_web',      { :mem => '512M', :description => 'Java Web Application'}],
+      'Standalone'       => ['standalone',    { :mem => '64M', :description => 'Standalone Application'}],
+      'Sinatra'          => ['sinatra',       { :mem => '128M', :description => 'Sinatra Application'}],
+      'Node'             => ['node',          { :mem => '64M',  :description => 'Node.js Application'}],
+      'PHP'              => ['php',           { :mem => '128M', :description => 'PHP Application'}],
+      'Erlang/OTP Rebar' => ['otp_rebar',     { :mem => '64M',  :description => 'Erlang/OTP Rebar Application'}],
+      'WSGI'             => ['wsgi',          { :mem => '64M',  :description => 'Python WSGI Application'}],
+      'Django'           => ['django',        { :mem => '128M', :description => 'Python Django Application'}],
+      'dotNet'           => ['dotNet',        { :mem => '128M', :description => '.Net Web Application'}],
+      'Rack'             => ['rack',          { :mem => '128M', :description => 'Rack Application'}],
+      'Play'             => ['play',          { :mem => '256M', :description => 'Play Framework Application'}],
+      'TomEE'            => ['tomee',         { :mem => '512M', :description => 'TomEE - Apache Java EE 6 Web framework'}],
+      'Glassfish'        => ['glassfish',     { :mem => '512M', :description => 'Glassfish - Java EE-compatible application server'}],
+      'JBoss'            => ['jboss',         { :mem => '512M', :description => 'JBoss Enterprise Application Platform 6'}]
     }
 
     class << self
@@ -153,9 +156,30 @@ module VMC::Cli
           return Framework.lookup('Spring')
         elsif contents =~ /WEB-INF\/lib\/org\.springframework\.core.*\.jar/
           return Framework.lookup('Spring')
-        else
-          return Framework.lookup('JavaWeb')
+        # Glassfish
+        elsif contents =~ /WEB-INF\/**\/glassfish*.xml/
+          return Framework.lookup('Glassfish')
         end
+
+        # Apache TomEE/JBoss
+        path_prefix = ''
+        # We need to grep for xml file contents, thus we unpack the war file and delete it later.
+        if war_file
+          path_prefix = "tmp-project-directory-#{war_file}/"
+          ZipUtil.unpack(war_file, "tmp-project-directory-#{war_file}")
+        end
+
+        if !File.open("#{path_prefix}WEB-INF/web.xml") { |f| f.read.scan /tomee/ }.empty?
+          FileUtils.rm_rf(path_prefix) if war_file
+          return Framework.lookup('TomEE')
+        elsif !File.open("#{path_prefix}WEB-INF/web.xml") { |f| f.read.scan /jboss/ }.empty?
+          FileUtils.rm_rf(path_prefix) if war_file
+          return Framework.lookup('JBoss')
+        end
+
+        FileUtils.rm_rf(path_prefix) if war_file
+
+        return Framework.lookup('JavaWeb')
       end
 
       def detect_framework_from_zip(zip_file, available_frameworks)
