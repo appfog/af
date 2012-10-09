@@ -16,7 +16,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     foo_info['hostname'].should == '192.168.1.1'
     foo_info['port'].should == 3344
   end
-
+  
   it 'should output a message when no app instances found' do
     @client.should_receive(:app_info).with("foo").and_return(:staging=>{:model=>'rails3'})
     @client.should_receive(:app_instances).with("foo").and_return({:instances=>[]})
@@ -28,7 +28,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     end
     errmsg.should == "Error: No running instances for [foo]"
   end
-
+  
   it 'should output a message when app does not have console access b/c files are missing' do
     @client.should_receive(:app_info).with("foo").and_return(:staging=>{:model=>'rails3'})
     @client.should_receive(:app_instances).with("foo").and_return({:instances=>[{}]})
@@ -42,7 +42,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     errmsg.should == "Error: Console access not supported for [foo]. " +
       "Please redeploy your app to enable support."
   end
-
+  
   it 'should output a message when app does not have console access b/c port is not bound' do
     @client.should_receive(:app_info).with("foo").and_return(:staging=>{:model=>'rails3'})
     @client.should_receive(:app_instances).with("foo").and_return({:instances=>[{}]})
@@ -55,7 +55,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     end
     errmsg.should == "Error: Console port not provided for [foo].  Try restarting the app."
   end
-
+  
   it 'should output a message when console is not supported for app type' do
      @client.should_receive(:app_info).with("foo").and_return(:staging=>{:model=>'sinatra'})
      errmsg = nil
@@ -67,14 +67,14 @@ describe 'VMC::Cli::ConsoleHelper' do
      errmsg.should == "Error: 'foo' is a sinatra application.  " +
        "Console access is not supported for sinatra applications."
   end
-
+  
   it 'should start console and process a command if authentication succeeds' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("Switch to inspect mode\nirb():001:0> ")
     verify_console_exit "irb():001:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should output a message if console authentication information cannot be obtained' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('invalid_console_access.txt')))
     errmsg = nil
@@ -85,7 +85,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     end
     errmsg.should == "Error: Unable to verify console credentials."
   end
-
+  
   it 'should exit if authentication fails' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("Login failed.")
@@ -98,7 +98,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     end
     errmsg.should == "Error: Login failed."
   end
-
+  
   it 'should retry authentication on timeout' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_raise(TimeoutError)
@@ -106,7 +106,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():001:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should retry authentication on EOF' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_raise(EOFError)
@@ -115,7 +115,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():001:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should operate console interactively' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -125,7 +125,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():002:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should not crash if command times out' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -135,7 +135,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():001:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should exit with error message if an EOF is received' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("Switch to inspect mode\nirb():001:0> ")
@@ -151,7 +151,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     errmsg.should == "Error: The console connection has been terminated.  " +
       "Perhaps the app was stopped or deleted?"
   end
-
+  
   it 'should not keep blank lines in history' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -161,7 +161,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():002:0*> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should not keep identical commands in history' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -172,7 +172,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():002:0> "
     start_local_console(3344,'foo')
   end
-
+  
   it 'should return remote tab completion data' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("Switch to inspect mode\nirb():001:0> ")
@@ -181,7 +181,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     start_local_console(3344,'foo')
     Readline.completion_proc.yield("app.").should == ["to_s","nil?"]
   end
-
+  
   it 'should return remote tab completion data on receipt of empty completion string' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -190,7 +190,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     start_local_console(3344,'foo')
     Readline.completion_proc.yield("app.").should == []
   end
-
+  
   it 'should not crash on timeout of remote tab completion data' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("Switch to inspect mode\nirb():001:0> ")
@@ -199,7 +199,7 @@ describe 'VMC::Cli::ConsoleHelper' do
     start_local_console(3344,'foo')
     Readline.completion_proc.yield("app.").should == []
   end
-
+  
   it 'should properly initialize Readline for tab completion' do
     @client.should_receive(:app_files).with("foo", '/app/cf-rails-console/.consoleaccess', '0').and_return(IO.read(spec_asset('console_access.txt')))
     @telnet_client.should_receive(:login).with({"Name"=>"cfuser", "Password"=>"testpw"}).and_return("irb():001:0> ")
@@ -210,18 +210,18 @@ describe 'VMC::Cli::ConsoleHelper' do
     verify_console_exit "irb():001:0> "
     start_local_console(3344,'foo')
   end
-
+  
   def client(cli=nil)
     @client
   end
-
+  
   def display(message, nl=true)
   end
-
+  
   def telnet_client(port)
     @telnet_client
   end
-
+  
   def verify_console_exit(prompt)
     Readline.should_receive(:readline).with(prompt).and_return("exit")
     @telnet_client.should_receive(:cmd).with(({"String"=>"exit", "Timeout"=>1})).and_raise(TimeoutError)
