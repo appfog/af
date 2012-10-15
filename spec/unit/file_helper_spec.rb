@@ -39,10 +39,16 @@ describe 'VMC::Cli::FileHelper' do
       reject_patterns(patterns,files).should == %W( index.html script/foo.js)
     end
     
-    it 'should negate test for patterns starting with !' do
-      patterns = %W( !index.html )
-      files = %W( index.html index2.html index3.html lib/shared.so)
-      reject_patterns(patterns,files).should == %W(index.html)
+    it 'should reverse previous matches for patterns starting with !' do
+      patterns = %W( *.html !index[23].html )
+      files = %W( index.html index2.html index3.html index4.html lib/shared.so)
+      reject_patterns(patterns,files).should == %W(index2.html index3.html lib/shared.so)
+    end
+
+    it 'should not reverse later matches for patterns starting with !' do
+      patterns = %W( !index[23].html *.html  )
+      files = %W( index.html index2.html index3.html index4.html lib/shared.so)
+      reject_patterns(patterns,files).should == %W(lib/shared.so)
     end
     
     it 'should match beginning of path for leading /' do 
@@ -58,6 +64,15 @@ describe 'VMC::Cli::FileHelper' do
       results.should == %W(index.html index4.html)
     end
     
+  end
+  
+  describe "sockets" do
+    it 'should ignore socket files' do
+      File.should_receive(:socket?).with('a-socket').and_return(true)
+      File.should_receive(:socket?).with('not-a-socket').and_return(false)
+      results = ignore_sockets(%W(a-socket not-a-socket))
+      results.should == %W(not-a-socket)
+    end
   end
   
 end

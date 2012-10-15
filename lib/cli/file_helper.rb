@@ -4,17 +4,15 @@ module VMC::Cli
     
     def match(pattern,filename)
       return false if pattern =~ /^\s*$/ # ignore blank lines
-      
+
       return false if pattern =~ /^#/ # lines starting with # are comments
+
+      return false if pattern =~ /^!/ # lines starting with ! are negated
       
       if pattern =~ /\/$/ 
         # pattern ending in a slash should ignore directory and all its children
         dirname = pattern.sub(/\/$/,'')
         return filename == dirname || filename =~ /#{dirname}\/.*$/
-      end
-      
-      if pattern =~ /^!/
-        return !match(pattern.sub(/^!/,''),filename)
       end
       
       if pattern =~ /^\//
@@ -29,9 +27,26 @@ module VMC::Cli
       File.fnmatch(pattern,filename,File::FNM_PATHNAME)
     end
     
+    def is_negative_pattern?(pattern)
+      pattern =~ /^!/
+    end
+    
+    def negative_match(pattern,filename)
+      return false unless pattern =~ /^!/
+      match(pattern.sub(/^!/,''),filename)
+    end
+    
     def reject_patterns(patterns,filenames)
       filenames.reject do |filename|
-        patterns.detect { |pattern| match(pattern,filename)} != nil
+        exclude = false
+        patterns.each do | pattern|
+          if is_negative_pattern?(pattern)
+            exclude = false if negative_match(pattern,filename)
+          else
+            exclude ||= match(pattern,filename)
+          end
+        end
+        exclude
       end
     end
 
@@ -42,6 +57,10 @@ module VMC::Cli
       else
         files
       end
+    end
+    
+    def ignore_sockets(files)
+      files.reject { |f| File.socket? f }
     end
     
   end
