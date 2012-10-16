@@ -478,26 +478,6 @@ module VMC::Cli::Command
       err "Can't deploy applications from staging directory: [#{Dir.tmpdir}]"
     end
 
-    def check_unreachable_links(path)
-      files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
-
-      pwd = Pathname.pwd
-
-      abspath = File.expand_path(path)
-      unreachable = []
-      files.each do |f|
-        file = Pathname.new(f)
-        if file.symlink? && !file.realpath.to_s.start_with?(abspath)
-          unreachable << file.relative_path_from(pwd)
-        end
-      end
-
-      unless unreachable.empty?
-        root = Pathname.new(path).relative_path_from(pwd)
-        err "Can't deploy application containing links '#{unreachable}' that reach outside its root '#{root}'"
-      end
-    end
-
     def upload_app_bits(appname, path, infra)
       display 'Uploading Application:'
 
@@ -522,15 +502,19 @@ module VMC::Cli::Command
           elsif zip_file = Dir.glob('*.zip').first
             VMC::Cli::ZipUtil.unpack(zip_file, explode_dir)
           else
-            check_unreachable_links(path)
             FileUtils.mkdir(explode_dir)
 
+            afignore_path = "#{path}/.afignore"
+            files = afignore(afignore_path, Dir.glob("#{path}/**/*", File::FNM_DOTMATCH))
+            check_unreachable_links(path,files)
+
+            # reload the file list without FNM_DOTMATCH and run afignore again
             files = Dir.glob('{*,.[^\.]*}')
 
             # Do not process .git files
             files.delete('.git') if files
             
-            files = ignore_sockets( afignore("#{path}/.afignore",files) )
+            files = ignore_sockets( afignore(afignore_path,files) )
             
             FileUtils.cp_r(files, explode_dir)
 

@@ -75,4 +75,31 @@ describe 'VMC::Cli::FileHelper' do
     end
   end
   
+  describe "unreachable links" do
+    
+    it 'raise exception for links outside project directory' do
+      @project = double('pathname',
+        :realpath => "/project", 
+        :relative_path_from => "."
+        )      
+      @internal = double('pathname', 
+        :realpath => "/project/internal", 
+        :symlink? => true
+        )
+      @external = double('pathname',
+        :realpath => "/somewhere/else",
+        :symlink? => true,
+        :relative_path_from => "external"
+        )
+        
+      Pathname.should_receive(:new).with("/project").and_return(@project)
+      Pathname.should_receive(:new).with("/project/internal").and_return(@internal)
+      Pathname.should_receive(:new).with("/project/external").and_return(@external)
+      
+      expect {
+        check_unreachable_links('/project',%W(/project/internal /project/external))        
+      }.to raise_error(VMC::Cli::CliExit)
+    end
+  end
+  
 end

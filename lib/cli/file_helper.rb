@@ -63,5 +63,24 @@ module VMC::Cli
       files.reject { |f| File.socket? f }
     end
     
+    
+    def check_unreachable_links(path,files)
+      pwd = Pathname.new(path)
+      abspath = pwd.realpath.to_s
+      unreachable = []
+      files.each do |f|
+        file = Pathname.new(f)
+        if file.symlink? && !file.realpath.to_s.start_with?(abspath)
+          unreachable << file.relative_path_from(pwd).to_s
+        end
+      end
+
+      unless unreachable.empty?
+        root = pwd.relative_path_from(pwd).to_s
+        err "Can't deploy application containing links '#{unreachable.join(",")}' that reach outside its root '#{root}'"
+      end
+    end
+
+    
   end
 end
