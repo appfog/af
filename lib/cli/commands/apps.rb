@@ -504,23 +504,17 @@ module VMC::Cli::Command
           else
             FileUtils.mkdir(explode_dir)
 
-            afignore_path = "#{path}/.afignore"
-            files = afignore(afignore_path, Dir.glob("#{path}/**/*", File::FNM_DOTMATCH))
-            check_unreachable_links(path,files)
+            afi = VMC::Cli::FileHelper::AppFogIgnore.from_file("#{path}/.afignore")
 
-            # reload the file list without FNM_DOTMATCH and run afignore again
-            files = Dir.glob('{*,.[^\.]*}')
+            files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
+            check_unreachable_links(path,afi.included_files(files))
 
-            # Do not process .git files
-            files.delete('.git') if files
+            copy_files( path, ignore_sockets( afi.included_files(files)), explode_dir )
             
-            files = ignore_sockets( afignore(afignore_path,files) )
-            
-            FileUtils.cp_r(files, explode_dir)
-
           end
         end
       end
+
 
       # Send the resource list to the cloudcontroller, the response will tell us what it already has..
       unless @options[:noresources]

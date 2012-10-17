@@ -9,59 +9,76 @@ describe 'VMC::Cli::FileHelper' do
 
   describe "afignore" do
     
+    before :each do
+      @af = VMC::Cli::FileHelper
+    end
+    
     it 'should ignore blank lines' do
-      patterns = [ "" ]
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new([ "" ])
       files = %W( index.html )
-      reject_patterns(patterns,files).should == %W( index.html )
+      afi.included_files(files).should == %W( index.html )
     end
 
     it 'should ignore lines starting with #' do
-      patterns = [ "# index.html" ]
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new([ "# index.html" ])
       files = %W(index.html)
-      reject_patterns(patterns,files).should == %W( index.html )
+      afi.included_files(files).should == %W( index.html )
     end
 
     it 'should ignore literal matches' do
-      patterns = %W(index1.html index3.html)
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(index1.html index3.html))
       files = %W(index1.html index2.html index3.html)
-      reject_patterns(patterns,files).should == %W( index2.html )
+      afi.included_files(files).should == %W( index2.html )
     end
-    
+
     it 'should not match / in pattern with wildcard' do
-      patterns = [ "*.html" ]
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new([ "*.html" ])
       files = %W(index.html public/index.html)
-      reject_patterns(patterns,files).should == %W( public/index.html )
+      afi.included_files(files).should == %W( public/index.html )
     end
     
     it 'should ignore directories for patterns ending in slash' do
-      patterns = %W( public/ )
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W( public/ ))
       files = %W(index.html public public/first public/second script/foo.js)
-      reject_patterns(patterns,files).should == %W( index.html script/foo.js)
+      afi.included_files(files).should == %W( index.html script/foo.js)
     end
     
     it 'should reverse previous matches for patterns starting with !' do
-      patterns = %W( *.html !index[23].html )
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W( *.html !index[23].html ))
       files = %W( index.html index2.html index3.html index4.html lib/shared.so)
-      reject_patterns(patterns,files).should == %W(index2.html index3.html lib/shared.so)
+      afi.included_files(files).should == %W(index2.html index3.html lib/shared.so)
     end
 
     it 'should not reverse later matches for patterns starting with !' do
-      patterns = %W( !index[23].html *.html  )
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W( !index[23].html *.html  ))
       files = %W( index.html index2.html index3.html index4.html lib/shared.so)
-      reject_patterns(patterns,files).should == %W(lib/shared.so)
+      afi.included_files(files).should == %W(lib/shared.so)
     end
     
     it 'should match beginning of path for leading /' do 
-      patterns = %W( /*.c )
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W( /*.c ))
       files = %W( foo.c lib/foo.c )
-      reject_patterns(patterns,files).should == %W(lib/foo.c)
+      afi.included_files(files).should == %W(lib/foo.c)
+    end
+    
+    it 'can return files excluded by .afignore' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(index1.html index3.html))
+      files = %W(index1.html index2.html index3.html)
+      afi.excluded_files(files).should == %W( index1.html index3.html )
+    end
+    
+    it 'should ignore .git directory by default' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new([])
+      files = %W(index.html .git/config )
+      afi.included_files(files).should == %W( index.html )
     end
     
     it 'should read patterns from .afignore' do 
+      files = %W(index.html index2.html index3.html index4.html)
       File.should_receive(:exists?).with('.afignore').and_return(true)
       File.should_receive(:read).with('.afignore').and_return("index2.html\nindex3.html")
-      results = afignore('.afignore',%W(index.html index2.html index3.html index4.html))
-      results.should == %W(index.html index4.html)
+      afi = VMC::Cli::FileHelper::AppFogIgnore.from_file('.afignore')
+      afi.included_files(files).should == %W(index.html index4.html)
     end
     
   end
