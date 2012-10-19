@@ -3,18 +3,19 @@ module VMC::Cli
     
     class AppFogIgnore
       
-      def initialize(patterns)
+      def initialize(patterns,project_root = "")
         @patterns = patterns + [ ".git/" ]
+        @project_root = project_root
       end
-        
+      
       def included_files(filenames)
         exclude_dots_only(filenames).reject do |filename|
           exclude = false
           @patterns.each do |pattern|
-            if AppFogIgnore.is_negative_pattern?(pattern)
-              exclude = false if AppFogIgnore.negative_match(pattern,filename)
+            if is_negative_pattern?(pattern)
+              exclude = false if negative_match(pattern,filename)
             else
-              exclude ||= AppFogIgnore.match(pattern,filename)
+              exclude ||= match(pattern,filename)
             end
           end
           exclude
@@ -34,16 +35,20 @@ module VMC::Cli
         filenames - included_files(filenames)
       end
 
-      def self.from_file(ignore_path)
-        if File.exists?(ignore_path) 
-          contents = File.read(ignore_path).split("\n")
-          AppFogIgnore.new(contents)
+      def self.from_file(project_root)
+        f = "#{project_root}/.afignore"
+        if File.exists?(f) 
+          contents = File.read(f).split("\n")
+          AppFogIgnore.new(contents,project_root)
         else
-          AppFogIgnore.new([])
+          AppFogIgnore.new([],project_root)
         end
       end
 
-      def self.match(pattern,filename)
+      def match(pattern,filename)
+
+        filename = filename.sub(/^#{@project_root}\//,'') # remove any project directory prefix
+
         return false if pattern =~ /^\s*$/ # ignore blank lines
 
         return false if pattern =~ /^#/ # lines starting with # are comments
@@ -68,11 +73,11 @@ module VMC::Cli
         File.fnmatch(pattern,filename,File::FNM_PATHNAME)
       end
     
-      def self.is_negative_pattern?(pattern)
+      def is_negative_pattern?(pattern)
         pattern =~ /^!/
       end
     
-      def self.negative_match(pattern,filename)
+      def negative_match(pattern,filename)
         return false unless pattern =~ /^!/
         match(pattern.sub(/^!/,''),filename)
       end
@@ -101,17 +106,20 @@ module VMC::Cli
     end
 
     def copy_files(project_root,files,dest_dir)
+      project_root = Pathname.new(project_root)
       files.reject { |f| File.symlink?(f) }.each do |f|
+        dest = Pathname.new(f).relative_path_from(project_root)
         if File.directory?(f)
-          FileUtils.mkdir_p("#{dest_dir}/#{f}")
+          FileUtils.mkdir_p("#{dest_dir}/#{dest}")
         else
-          FileUtils.cp(f,"#{dest_dir}/#{f}")
+          FileUtils.cp(f,"#{dest_dir}/#{dest}")
         end
       end      
       root = Pathname.new(project_root).realpath
       files.select { |f| File.symlink?(f) }.each do |f|
+        dest = Pathname.new(f).relative_path_from(project_root)
         p = Pathname.new(f).realpath
-        FileUtils.ln_s(p.relative_path_from(root),"#{dest_dir}/#{f}")
+        FileUtils.ln_s(p.relative_path_from(root),"#{dest_dir}/#{dest}")
       end
     end
     

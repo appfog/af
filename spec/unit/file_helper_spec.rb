@@ -75,10 +75,16 @@ describe 'VMC::Cli::FileHelper' do
     
     it 'should read patterns from .afignore' do 
       files = %W(index.html index2.html index3.html index4.html)
-      File.should_receive(:exists?).with('.afignore').and_return(true)
-      File.should_receive(:read).with('.afignore').and_return("index2.html\nindex3.html")
-      afi = VMC::Cli::FileHelper::AppFogIgnore.from_file('.afignore')
+      File.should_receive(:exists?).with('./.afignore').and_return(true)
+      File.should_receive(:read).with('./.afignore').and_return("index2.html\nindex3.html")
+      afi = VMC::Cli::FileHelper::AppFogIgnore.from_file('.')
       afi.included_files(files).should == %W(index.html index4.html)
+    end
+    
+    it 'should ignore project directory when matching patterns' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(about.html),"/project")
+      files = %W(/project/index.html /project/about.html)
+      afi.included_files(files).should == %W(/project/index.html)
     end
     
   end

@@ -504,7 +504,7 @@ module VMC::Cli::Command
           else
             FileUtils.mkdir(explode_dir)
 
-            afi = VMC::Cli::FileHelper::AppFogIgnore.from_file("#{path}/.afignore")
+            afi = VMC::Cli::FileHelper::AppFogIgnore.from_file("#{path}")
 
             files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
             check_unreachable_links(path,afi.included_files(files))
