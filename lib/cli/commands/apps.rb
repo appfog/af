@@ -478,31 +478,6 @@ module VMC::Cli::Command
       err "Can't deploy applications from staging directory: [#{Dir.tmpdir}]"
     end
 
-    def check_unreachable_links(path)
-      files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
-
-      pwd = Pathname.pwd
-
-      abspath = File.expand_path(path)
-      unreachable = []
-      files.each do |f|
-        file = Pathname.new(f)
-        if file.symlink? && !file.realpath.to_s.start_with?(abspath)
-          unreachable << file.relative_path_from(pwd)
-        end
-      end
-
-      unless unreachable.empty?
-        root = Pathname.new(path).relative_path_from(pwd)
-        err "Can't deploy application containing links '#{unreachable}' that reach outside its root '#{root}'"
-      end
-    end
-
-    def find_sockets(path)
-      files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
-      files && files.select { |f| File.socket? f }
-    end
-    
     def upload_app_bits(appname, path, infra)
       display 'Uploading Application:'
 
@@ -527,24 +502,19 @@ module VMC::Cli::Command
           elsif zip_file = Dir.glob('*.zip').first
             VMC::Cli::ZipUtil.unpack(zip_file, explode_dir)
           else
-            check_unreachable_links(path)
             FileUtils.mkdir(explode_dir)
 
-            files = Dir.glob('{*,.[^\.]*}')
+            afi = VMC::Cli::FileHelper::AppFogIgnore.from_file("#{path}")
 
-            # Do not process .git files
-            files.delete('.git') if files
-            
-            files = afignore("#{path}/.afignore",files)
-            
-            FileUtils.cp_r(files, explode_dir)
+            files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
+            check_unreachable_links(path,afi.included_files(files))
 
-            find_sockets(explode_dir).each do |s|
-              File.delete s
-            end
+            copy_files( path, ignore_sockets( afi.included_files(files)), explode_dir )
+            
           end
         end
       end
+
 
       # Send the resource list to the cloudcontroller, the response will tell us what it already has..
       unless @options[:noresources]
