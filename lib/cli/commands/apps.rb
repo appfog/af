@@ -523,7 +523,7 @@ module VMC::Cli::Command
         total_size = 0
         resource_files = Dir.glob("#{explode_dir}/**/*", File::FNM_DOTMATCH)
         resource_files.each do |filename|
-          next if (File.directory?(filename) || !File.exists?(filename))
+          next if (File.directory?(filename) || File.symlink?(filename) || !File.exists?(filename))
           fingerprints << {
             :size => File.size(filename),
             :sha1 => Digest::SHA1.file(filename).hexdigest,
