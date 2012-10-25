@@ -107,20 +107,16 @@ module VMC::Cli
 
     def copy_files(project_root,files,dest_dir)
       project_root = Pathname.new(project_root)
-      files.reject { |f| File.symlink?(f) }.each do |f|
+      files.each do |f|
         dest = Pathname.new(f).relative_path_from(project_root)
-        if File.directory?(f)
+        if File.symlink?(f)
+          FileUtils.copy_entry(f,"#{dest_dir}/#{dest}")
+        elsif File.directory?(f)
           FileUtils.mkdir_p("#{dest_dir}/#{dest}")
         else
           FileUtils.cp(f,"#{dest_dir}/#{dest}")
         end
       end      
-      root = Pathname.new(project_root).realpath
-      files.select { |f| File.symlink?(f) }.each do |f|
-        dest = Pathname.new(f).relative_path_from(project_root)
-        p = Pathname.new(f).realpath
-        FileUtils.ln_s(p.relative_path_from(root),"#{dest_dir}/#{dest}")
-      end
     end
     
   end
