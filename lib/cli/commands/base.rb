@@ -57,6 +57,7 @@ module VMC::Cli
 
         if apps = manifest["applications"]
           apps.each do |k, v|
+            client.infra = v['infra'] if v['infra']
             abs = File.expand_path(k, file)
             if Dir.pwd.start_with? abs
               manifest = merge_manifest(manifest, v)
