@@ -58,7 +58,7 @@ module VMC::Cli
         if pattern =~ /\/$/ 
           # pattern ending in a slash should ignore directory and all its children
           dirname = pattern.sub(/\/$/,'')
-          return filename == dirname || filename =~ /#{dirname}\/.*$/
+          return filename == dirname || filename =~ /^#{dirname}\/.*$/
         end
       
         if pattern =~ /^\//

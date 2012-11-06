@@ -86,6 +86,30 @@ describe 'VMC::Cli::FileHelper' do
       files = %W(/project/index.html /project/about.html)
       afi.included_files(files).should == %W(/project/index.html)
     end
+        
+    it 'should anchor directory patterns' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(data/))
+      files = %W(data/one.html data/two.html another/data/one.html)
+      afi.included_files(files).should == %W(another/data/one.html)
+    end
+
+    it 'should anchor directory patterns with regex' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(da.*/))
+      files = %W(data/one.html data/two.html another/data/one.html)
+      afi.included_files(files).should == %W(another/data/one.html)
+    end
+
+    it 'should anchor directory patterns with regex' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(.*da.*/))
+      files = %W(data/one.html data/two.html another/data/one.html index.html)
+      afi.included_files(files).should == %W(index.html)
+    end
+    
+    it 'should anchor file patterns' do
+      afi = VMC::Cli::FileHelper::AppFogIgnore.new(%W(one.html))
+      files = %W(one.html sub/one.html)
+      afi.included_files(files).should == %W(sub/one.html)
+    end
     
   end
   
