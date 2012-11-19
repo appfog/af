@@ -4,6 +4,20 @@ The AppFog CLI. This is the command line interface to AppFog.com
 
 af is based on vmc but will have features specific to the AppFog service as well as having the default target set to AppFog's service
 
+## Installation
+
+There are two ways to install af. Most users should install the RubyGem.
+
+    $ sudo gem install af
+
+You can also check out the source for development. You will need [Bundler](http://gembundler.com/) to build af.
+
+    $ git clone https://github.com/appfog/af.git
+    $ cd af
+    $ bundle install
+
+## Usage
+
 _Copyright 2010-2012, VMware, Inc. Licensed under the
 MIT license, please see the LICENSE file.  All rights reserved._
 
