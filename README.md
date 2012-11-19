@@ -116,7 +116,35 @@ MIT license, please see the LICENSE file.  All rights reserved._
       help [command]                               Get general help or help on a specific command
       help options                                 Get help on available options
 
-## Simple Story (for PHP apps)
+## Sample Usage (for PHP apps)
 
-    af login
-    af push
+    $ af login developer@example.com
+    Attempting login to [https://api.appfog.com]
+    Password: *********
+    Successfully logged into [https://api.appfog.com]
+    
+    $ af push
+    Would you like to deploy from the current directory? [Yn]: Y
+    Application Name: myapp
+    Detected a PHP Application, is this correct? [Yn]: 
+    1: AWS US East - Virginia
+    2: AWS EU West - Ireland
+    3: AWS Asia SE - Singapore
+    4: Rackspace AZ 1 - Dallas
+    5: HP AZ 2 - Las Vegas
+    Select Infrastructure: 1
+    Application Deployed URL [myapp.aws.af.cm]: 
+    Memory reservation (128M, 256M, 512M, 1G, 2G) [128M]: 
+    How many instances? [1]: 
+    Bind existing services to 'myapp'? [yN]: 
+    Create services to bind to 'myapp'? [yN]: 
+    Would you like to save this configuration? [yN]: 
+    Creating Application: OK
+    Uploading Application:
+      Checking for available resources: OK
+      Processing resources: OK
+      Packing application: OK
+      Uploading (6K): OK   
+    Push Status: OK
+    Staging Application 'myapp': OK                                          
+    Starting Application 'myapp': OK
