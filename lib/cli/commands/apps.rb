@@ -463,6 +463,20 @@ module VMC::Cli::Command
       end
     end
 
+    def rename(oldname, newname)
+      # Check if new app name is taken
+      if newname
+        err "Application '#{newname}' already exists" if app_exists?(newname)
+      else
+        raise VMC::Client::AuthError unless client.logged_in?
+      end
+
+      app = client.app_info(oldname)
+      app[:name] = newname
+      client.update_app(oldname, app)
+      display "Successfully updated app name to #{newname}".green
+    end
+
     private
 
     def app_exists?(appname)

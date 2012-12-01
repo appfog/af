@@ -355,6 +355,10 @@ class VMC::Cli::Runner
       usage('af env-del <appname> <variable>')
       set_cmd(:apps, :environment_del, 2)
 
+    when 'rename'
+      usage('af rename <curname> <newname>')
+      set_cmd(:apps, :rename, 2)
+
     when 'create-service', 'create_service'
       usage('af create-service [service] [servicename] [appname] [--name servicename] [--bind appname] [--infra infraname]')
       set_cmd(:services, :create_service) if @args.size == 0
