@@ -382,8 +382,13 @@ class VMC::Client
   end
 
   def default_base
-    return "vcap.me" if @target =~ /https?:\/\/api.vcap.me/
-    "aws.af.cm"
+    # remove the protocol, and the first component of the url, which is normally api
+    pattern = /https?:\/\/[^.]+\./
+    if @target =~ pattern
+      @target.sub(pattern,'')
+    else
+      "aws.af.cm"
+    end
   end
   
   def infra_valid?(name) 
