@@ -735,9 +735,17 @@ module VMC::Cli::Command
         health = format("%.3f", healthy_instances.to_f / expected_instance).to_f
       end
 
-      return 'RUNNING' if health && health == 1.0
-      return "#{(health * 100).round}%" if health
-      return 'N/A'
+      if health
+        if health == 1.0
+          return "RUNNING"
+        else
+          return "#{(health * 100).round}%" 
+        end
+      elsif d[:state] == "STARTED"
+        return 'N/A' # unstarted instances
+      else
+        return d[:state]
+      end
     end
 
     def app_started_properly(appname, error_on_health)
