@@ -58,6 +58,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       map <appname> <url>                          Register the application to the url
       unmap <appname> <url>                        Unregister the application from the url
       instances <appname> <num|delta>              Scale the application instances up or down
+      rename <curname> <newname>                   Change the application's name
 
     Application Information
       crashes <appname>                            List recent application crashes
