@@ -3,7 +3,7 @@ require "vmc/cli/app/base"
 module VMC::App
   class Rename < Base
     desc "Rename an application"
-    group :apps, :manage, :hidden => true
+    group :apps, :manage
     input :app, :desc => "Application to rename", :argument => :optional,
           :from_given => by_name(:app)
     input :name, :desc => "New application name", :argument => :optional
@@ -11,7 +11,11 @@ module VMC::App
       app = input[:app]
       name = input[:name]
 
+      original_name = app.guid
       app.name = name
+      app.class.guid_name = "hack" # allows the guid to set to original name
+      app.guid = original_name
+      app.class.guid_name = "name" # restore guid name
 
       with_progress("Renaming to #{c(name, :name)}") do
         app.update!
