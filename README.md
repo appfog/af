@@ -51,6 +51,7 @@ Applications
     stop APPS...       	Stop an application
 
   Download
+    download [APP]  Downloads last pushed source to zipfile
     pull [APP]      Downloads last pushed source to app name or path
 
   Information
@@ -103,6 +104,7 @@ Routes
   routes              	List routes in a space
 
 Infras
+  infras  List infras
 
 Domains
   add-domain NAME       	Add a domain to a space
