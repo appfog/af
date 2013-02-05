@@ -86,7 +86,7 @@ module VMC::App
         app.upload(path)
       end
     rescue
-      err "Upload failed. Try again with 'vmc push'."
+      err "Upload failed. Try again with 'af push'."
       raise
     end
 

@@ -63,7 +63,7 @@ describe VMC::Start::Login do
 
       subject
 
-      tokens_yaml = YAML.load_file(File.expand_path("~/.vmc/tokens.yml"))
+      tokens_yaml = YAML.load_file(File.expand_path("~/.af/tokens.yml"))
       expect(tokens_yaml["https://api.some-domain.com"][:token]).to eq("bearer some-new-access-token")
       expect(tokens_yaml["https://api.some-domain.com"][:refresh_token]).to eq("some-new-refresh-token")
     end

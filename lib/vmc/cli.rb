@@ -56,7 +56,7 @@ module VMC
 
     def default_action
       if input[:version]
-        line "vmc #{VERSION}"
+        line "af #{VERSION}"
       else
         super
       end
@@ -64,14 +64,14 @@ module VMC
 
     def check_target
       unless File.exists? target_file
-        fail "Please select a target with 'vmc target'."
+        fail "Please select a target with 'af target'."
       end
     end
 
     def check_logged_in
       unless client.logged_in?
         if force?
-          fail "Please log in with 'vmc login'."
+          fail "Please log in with 'af login'."
         else
           line c("Please log in first to proceed.", :warning)
           line
@@ -88,11 +88,11 @@ module VMC
       return unless v2?
 
       unless client.current_organization
-        fail "Please select an organization with 'vmc target --ask-org'."
+        fail "Please select an organization with 'af target --ask-org'."
       end
 
       unless client.current_space
-        fail "Please select a space with 'vmc target --ask-space'."
+        fail "Please select a space with 'af target --ask-space'."
       end
     end
 
