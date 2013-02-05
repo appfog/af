@@ -99,6 +99,8 @@ Routes
   delete-route [ROUTE]	Delete a route
   routes              	List routes in a space
 
+Infras
+
 Domains
   add-domain NAME       	Add a domain to a space
   create-domain NAME    	Create a domain
