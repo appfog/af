@@ -4,6 +4,7 @@ Mothership::Help.groups(
   [:start, "Getting Started"],
   [:apps, "Applications",
     [:manage, "Management"],
+    [:download, "Download"],
     [:info, "Information"]],
   [:services, "Services",
     [:manage, "Management"]],

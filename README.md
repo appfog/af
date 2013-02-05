@@ -50,6 +50,9 @@ Applications
     start APPS...      	Start an application
     stop APPS...       	Stop an application
 
+  Download
+    pull [APP]      Downloads last pushed source to app name or path
+
   Information
     crashes APPS...         	List an app's crashed instances
     env [APP]               	Show all environment variables set for an app
