@@ -23,6 +23,8 @@ module VMC::App
                             fail_unknown("domain", given)
                         end
                       }
+    input :infra,     :desc => "Infrastructure to use", :from_given => by_name(:infra)
+    input :url,       :desc => "URL to bind to app"
     input :memory,    :desc => "Memory limit"
     input :instances, :desc => "Number of instances to run", :type => :integer
     input :framework, :desc => "Framework to use", :from_given => by_name(:framework)

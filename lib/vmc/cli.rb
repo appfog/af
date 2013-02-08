@@ -237,6 +237,8 @@ module VMC
 
       @user_colors = super.dup
 
+      @user_colors[:infra] = :magenta
+
       # most terminal schemes are stupid, so use cyan instead
       @user_colors.each do |k, v|
         if v == :blue

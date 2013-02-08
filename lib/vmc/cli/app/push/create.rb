@@ -8,6 +8,7 @@ module VMC::App
     def get_inputs
       inputs = {}
       inputs[:name] = input[:name]
+      inputs[:infra] = determine_infra
       inputs[:total_instances] = input[:instances]
       inputs[:space] = client.current_space if client.current_space
       inputs[:production] = !!(input[:plan] =~ /^p/i) if v2?
@@ -20,6 +21,12 @@ module VMC::App
       inputs[:memory] = megabytes(input[:memory, human_mb])
 
       inputs
+    end
+
+    def determine_infra
+      return input[:infra] if input.has?(:infra)
+
+      input[:infra, detector.all_infras, nil, nil]
     end
 
     def determine_framework

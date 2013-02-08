@@ -39,6 +39,11 @@ module VMC::App
       ask_with_other("Framework", client.frameworks, choices, default, other)
     end
 
+    def ask_infra(choices, default, other)
+      #require 'debugger'; debugger
+      ask_with_other("Infrastructure", client.infras, choices, default, other)
+    end
+
     def ask_runtime(choices, default, other)
       ask_with_other("Runtime", client.runtimes, choices, default, other)
     end

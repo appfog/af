@@ -76,6 +76,11 @@ module VMC
       @all_frameworks ||= @client.frameworks
     end
 
+    # helper so that this is cached somewhere
+    def all_infras
+      @all_infras ||= @client.infras
+    end
+
     private
 
     def detected

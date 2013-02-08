@@ -9,6 +9,7 @@ module VMC::App
           :default => proc { client.current_space },
           :from_given => by_name(:space)
     input :name, :desc => "Filter by name regexp"
+    input :infra, :desc => "Filter by infra regexp"
     input :runtime, :desc => "Filter by runtime regexp"
     input :framework, :desc => "Filter by framework regexp"
     input :url, :desc => "Filter by url regexp"
@@ -59,9 +60,10 @@ module VMC::App
 
     def display_apps_table(apps)
       table(
-        ["name", "status", "usage", v2? && "plan", "runtime", "url"],
+        ["name", "infra", "status", "usage", v2? && "plan", "runtime", "url"],
         apps.collect { |a|
           [ c(a.name, :name),
+            c(a.infra.name, :infra),
             app_status(a),
             "#{a.total_instances} x #{human_mb(a.memory)}",
             v2? && (a.production ? "prod" : "dev"),
@@ -80,6 +82,10 @@ module VMC::App
     def app_matches?(a, options)
       if name = options[:name]
         return false if a.name !~ /#{name}/
+      end
+
+      if infra = options[:infra]
+        return false if a.infra !~ /#{infra}/
       end
 
       if runtime = options[:runtime]

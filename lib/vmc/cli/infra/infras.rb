@@ -1,3 +1,4 @@
+require "vmc/cli/appfog"
 require "vmc/cli/infra/base"
 
 module VMC::Infra
@@ -30,7 +31,7 @@ module VMC::Infra
       table(
         %w{infra description},
         infras.collect { |r|
-          [c(r[:infra], :infra),c(r[:description], :description),
+          [c(r.name, :infra),c(r.description, :description),
           ]
         })
     end
