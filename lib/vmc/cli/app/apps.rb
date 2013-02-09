@@ -85,7 +85,7 @@ module VMC::App
       end
 
       if infra = options[:infra]
-        return false if a.infra !~ /#{infra}/
+        return false if a.infra.name !~ /#{infra}/
       end
 
       if runtime = options[:runtime]

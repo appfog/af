@@ -62,7 +62,11 @@ module VMC::App
     def setup_new_app(path)
       self.path = path
       app = create_app(get_inputs)
-      map_route(app)
+# <<<<<<< HEAD
+#       map_route(app)
+# =======
+#       # map_url(app)
+# >>>>>>> Added infra to url domain
       create_services(app)
       bind_services(app)
       upload_app(app, path)
@@ -71,14 +75,14 @@ module VMC::App
 
     private
 
-    def url_choices(name)
+    def url_choices(name, infra)
       if v2?
         client.current_space.domains.sort_by(&:name).collect do |d|
           # TODO: check availability
           "#{name}.#{d.name}"
         end
       else
-        %W(#{name}.#{target_base})
+        %W(#{name}.#{infra.base})
       end
     end
 

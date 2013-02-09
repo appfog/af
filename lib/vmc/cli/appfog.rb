@@ -63,14 +63,13 @@ end
 # Patched to support infra
 module CFoundry::V1
   class App
-
-    attribute :infra, :string, :at => [:infra, :name], :default => 'aws'
+    attribute :infra, :string, :at => [:infra, :provider], :default => 'aws'
 
     alias_method :infra_name, :infra
     alias_method :infra_name=, :infra=
 
     def infra
-      c = @client.infra(infra_name)
+      @client.infra(infra_name)
     end
 
     def infra=(obj)
@@ -80,6 +79,10 @@ module CFoundry::V1
     def inspect
       "\#<#{self.class.name} '#@guid'>"
     end
+
+    # remap payload locations
+    write_locations[:framework] = [:staging, :framework]
+    write_locations[:runtime] = [:staging, :runtime]
   end
 end
 

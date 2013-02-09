@@ -12,6 +12,10 @@ module VMC::App
 
     def ask_domain(app)
       choices = v2? ? app.space.domains : ["#{app.name}.#{target_base}"]
+# =======
+#     def ask_url(name, infra)
+#       choices = url_choices(name, infra)
+# >>>>>>> Added infra to url domain
 
       options = {
         :choices => choices + ["none"],

@@ -7,8 +7,10 @@ module VMC::App
 
     def get_inputs
       inputs = {}
-      inputs[:name] = input[:name]
-      inputs[:infra] = determine_infra
+      inputs[:name] = name = input[:name]
+      inputs[:infra] = infra = determine_infra
+      inputs[:url] = input[:url, name, infra]
+      inputs[:uris] = [inputs[:url]]
       inputs[:total_instances] = input[:instances]
       inputs[:space] = client.current_space if client.current_space
       inputs[:production] = !!(input[:plan] =~ /^p/i) if v2?
