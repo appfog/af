@@ -45,7 +45,7 @@ module VMC::Service
         end
       else
         table(
-          ["name", "service", "version", v2? && "plan", v2? && "bound apps"],
+          ["name", "infra", "service", "version", v2? && "plan", v2? && "bound apps"],
           services.collect { |i|
             if v2?
               plan = i.service_plan
@@ -56,10 +56,11 @@ module VMC::Service
               apps = name_list(i.service_bindings.collect(&:app))
             else
               label = i.vendor
-              version = i.version
+              version = i.version.to_s
             end
 
             [ c(i.name, :name),
+              c(i.infra.name, :infra),
               label,
               version,
               v2? && plan.name,
