@@ -5,20 +5,20 @@
 #############
 
 $:.push File.expand_path("../lib", __FILE__)
-require "vmc/version"
+require "af/version"
 
 Gem::Specification.new do |s|
-  s.name        = "vmc"
-  s.version     = VMC::VERSION.dup
-  s.authors     = ["Cloud Foundry Team", "Alex Suraci"]
-  s.email       = %w(vcap-dev@googlegroups.com)
-  s.homepage    = "http://github.com/cloudfoundry/vmc"
+  s.name        = "af"
+  s.version     = AF::VERSION.dup
+  s.authors     = ["Cloud Foundry Team", "AppFog"]
+  s.email       = %w(support@appfog.com)
+  s.homepage    = "http://github.com/appfog/af"
   s.summary     = %q{
-    Friendly command-line interface for Cloud Foundry.
+    Friendly command-line interface for AppFog.
   }
-  s.executables = %w{vmc}
+  s.executables = %w{af}
 
-  s.rubyforge_project = "vmc"
+  s.rubyforge_project = "af"
 
   s.files         = %w(LICENSE Rakefile) + Dir["lib/**/*"]
   s.test_files    = Dir["spec/**/*"]
