@@ -3,7 +3,6 @@ require "vmc/cli/app/base"
 
 module CFoundry::V1
   class Client
-    include ClientMethods, CFoundry::LoginHelpers
     attr_reader :base
 
     def app_pull(name, dir)
