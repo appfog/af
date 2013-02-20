@@ -5,6 +5,7 @@ require "rubygems"
 
 require "vmc"
 require "vmc/plugin"
+require "af"
 
 VMC::Plugin.load_all
 
