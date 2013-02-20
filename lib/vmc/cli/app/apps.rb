@@ -1,5 +1,4 @@
 require "vmc/cli/app/base"
-require "vmc/cli/appfog"
 
 module VMC::App
   class Apps < Base

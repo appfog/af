@@ -22,7 +22,6 @@ module VMC
       end
 
       def app_status(a)
-        puts a.state
         health = a.health
 
         if a.debug_mode == "suspend" && health == "0%"

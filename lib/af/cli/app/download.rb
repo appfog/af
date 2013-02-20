@@ -1,19 +1,6 @@
 require 'open-uri'
 require "vmc/cli/app/base"
 
-module CFoundry::V1
-  class Client
-    attr_reader :base
-
-    def app_download(name, path)
-      body = @base.get("apps", name, "application")
-      file = File.new(path, "wb")
-      file.write(body)
-      file.close
-    end
-  end
-end
-
 module VMC::App
   class Download < Base
     desc "Downloads last pushed source to zipfile"

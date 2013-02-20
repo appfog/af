@@ -1,5 +1,4 @@
-require "vmc/cli/appfog"
-require "vmc/cli/infra/base"
+require "af/cli/infra/base"
 
 module VMC::Infra
   class Infras < Base

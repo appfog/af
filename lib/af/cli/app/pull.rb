@@ -1,22 +1,6 @@
 require 'open-uri'
 require "vmc/cli/app/base"
 
-module CFoundry::V1
-  class Client
-    attr_reader :base
-
-    def app_pull(name, dir)
-      body = @base.get("apps", name, "application")
-      file = Tempfile.new(name)
-      file.binmode
-      file.write(body)
-      file.close
-      CFoundry::Zip.unpack(file.path, dir)
-      file.unlink
-    end
-  end
-end
-
 module VMC::App
   class Pull < Base
     desc "Downloads last pushed source to app name or path"

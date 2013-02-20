@@ -2,7 +2,6 @@ require "vmc/cli/app/base"
 require "vmc/cli/app/push/sync"
 require "vmc/cli/app/push/create"
 require "vmc/cli/app/push/interactions"
-require "vmc/cli/appfog"
 
 module VMC::App
   class Push < Base
