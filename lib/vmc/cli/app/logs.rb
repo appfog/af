@@ -66,8 +66,8 @@ module VMC::App
               i.file(*log)
             end
 
-          lines body
-          line unless body.empty?
+          lines body unless body.nil?
+          line unless body.nil?
         rescue CFoundry::NotFound
         end
       end
