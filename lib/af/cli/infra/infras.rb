@@ -3,7 +3,7 @@ require "af/cli/infra/base"
 module VMC::Infra
   class Infras < Base
     desc "List infras"
-    group :infras
+    group :system
     input :space, :desc => "Show infras in given space",
           :default => proc { client.current_space },
           :from_given => by_name(:space)
