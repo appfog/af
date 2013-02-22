@@ -12,6 +12,7 @@ Mothership::Help.groups(
   [:spaces, "Spaces"],
   [:routes, "Routes"],
   [:system, "System",
+    [:runtimes, "Runtimes"],
     [:infras, "Infras"]],
   [:domains, "Domains"],
   [:admin, "Administration",
