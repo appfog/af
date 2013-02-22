@@ -18,11 +18,15 @@ module VMC::App
 
         line unless quiet?
 
-        spaced(instances) do |i|
-          if quiet?
-            line i.id
-          else
-            display_crashed_instance(i)
+        if instances.empty?
+          puts "No crashed instances for #{c(app.name, :name)}"
+        else
+          spaced(instances) do |i|
+            if quiet?
+              line i.id
+            else
+              display_crashed_instance(i)
+            end
           end
         end
       end
