@@ -8,6 +8,7 @@ module VMC::Service
 
     desc "Create a service"
     group :services, :manage
+    input :infra,    :desc => "Infrastructure to use", :from_given => by_name(:infra)
     input :offering, :desc => "What kind of service (e.g. redis, mysql)",
           :argument => :optional, :from_given => offerings_from_label
     input :name, :desc => "Name for your service", :argument => :optional
@@ -23,6 +24,10 @@ module VMC::Service
           :alias => "--bind", :from_given => by_name(:app)
     def create_service
       offerings = client.services
+
+      if input[:infra]
+        offerings.reject! { |s| s.infra.to_s != input[:infra].name }
+      end
 
       if input[:provider]
         offerings.reject! { |s| s.provider != input[:provider] }
@@ -60,6 +65,8 @@ module VMC::Service
       offering = offerings.first
 
       service = client.service_instance
+
+      service.infra_name = input[:infra].name
       service.name = input[:name, offering]
 
       if v2?
@@ -84,6 +91,14 @@ module VMC::Service
     end
 
     private
+
+    def ask_infra(choices, default, other)
+      [ask("Infrastructure?", :choices => client.infras,
+           :display => proc { |s|
+              str = "#{c(s.name, :name)} - #{s.description}"
+           },
+           :complete => proc { |s| "#{s.name} #{s.description}" })]
+    end
 
     def ask_offering(offerings)
       [ask("What kind?", :choices => offerings.sort_by(&:label),

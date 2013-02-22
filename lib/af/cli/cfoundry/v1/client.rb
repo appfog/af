@@ -46,5 +46,31 @@ module CFoundry::V1
       CFoundry::Zip.unpack(file.path, dir)
       file.unlink
     end
+
+    # Retrieve available services.
+    def services(options = {})
+      services = []
+
+      @base.system_services.each do |infra, infra_services|
+        infra_services.each do |type, vendors|
+          vendors.each do |vendor, providers|
+            providers.each do |provider, properties|
+              properties.each do |_, meta|
+                meta[:supported_versions].each do |ver|
+                  state = meta[:version_aliases].find { |k, v| v == ver }
+
+                  services <<
+                    Service.new(vendor.to_s, infra, ver.to_s, meta[:description],
+                                type.to_s, provider.to_s, state && state.first,
+                                meta[:plans], meta[:default_plan])
+                end
+              end
+            end
+          end
+        end
+      end
+
+      services
+    end
   end
 end

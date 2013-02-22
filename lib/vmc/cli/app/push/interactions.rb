@@ -44,7 +44,6 @@ module VMC::App
     end
 
     def ask_infra(choices, default, other)
-      #require 'debugger'; debugger
       ask_with_other("Infrastructure", client.infras, choices, default, other)
     end
 
