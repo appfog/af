@@ -3,7 +3,7 @@ require "vmc/cli/organization/base"
 module VMC::Organization
   class Org < Base
     desc "Show organization information"
-    group :organizations
+    group :organizations, :hidden => true
     input :organization, :desc => "Organization to show",
           :aliases => %w{--org -o}, :argument => :optional,
           :from_given => by_name(:organization),

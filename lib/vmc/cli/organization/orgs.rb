@@ -3,7 +3,7 @@ require "vmc/cli/organization/base"
 module VMC::Organization
   class Orgs < Base
     desc "List available organizations"
-    group :organizations
+    group :organizations, :hidden => true
     input :full, :desc => "Show full information for apps, services, etc.",
           :default => false
     def orgs
