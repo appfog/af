@@ -3,7 +3,7 @@ require "vmc/cli/space/base"
 module VMC::Space
   class Spaces < Base
     desc "List spaces in an organization"
-    group :spaces
+    group :spaces, :hidden => true
     input :organization, :desc => "Organization to list spaces from",
           :aliases => %w{--org -o}, :argument => :optional,
           :from_given => by_name(:organization),

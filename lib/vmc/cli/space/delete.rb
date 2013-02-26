@@ -3,7 +3,7 @@ require "vmc/cli/space/base"
 module VMC::Space
   class Delete < Base
     desc "Delete a space and its contents"
-    group :spaces
+    group :spaces, :hidden => true
     input :organization, :desc => "Space's organization",
           :aliases => ["--org", "-o"], :from_given => by_name(:organization),
           :default => proc { client.current_organization }
