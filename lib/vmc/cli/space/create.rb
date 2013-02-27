@@ -3,7 +3,7 @@ require "vmc/cli/space/base"
 module VMC::Space
   class Create < Base
     desc "Create a space in an organization"
-    group :spaces
+    group :spaces, :hidden => true
     input :name, :desc => "Space name", :argument => :optional
     input :organization, :desc => "Parent organization",
           :argument => :optional, :aliases => ["--org", "-o"],

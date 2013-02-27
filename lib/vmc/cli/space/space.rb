@@ -3,7 +3,7 @@ require "vmc/cli/space/base"
 module VMC::Space
   class Space < Base
     desc "Show space information"
-    group :spaces
+    group :spaces, :hidden => true
     input :organization, :desc => "Space's organization",
           :aliases => %w{--org -o},
           :default => proc { client.current_organization },
