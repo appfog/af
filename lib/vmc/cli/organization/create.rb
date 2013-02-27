@@ -3,7 +3,7 @@ require "vmc/cli/organization/base"
 module VMC::Organization
   class Create < Base
     desc "Create an organization"
-    group :organizations
+    group :organizations, :hidden => true
     input :name, :desc => "Organization name", :argument => :optional
     input :target, :desc => "Switch to the organization after creation",
           :alias => "-t", :default => true

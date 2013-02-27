@@ -3,7 +3,7 @@ require "vmc/cli/organization/base"
 module VMC::Organization
   class Delete < Base
     desc "Delete an organization"
-    group :organizations
+    group :organizations, :hidden => true
     input :organization, :desc => "Organization to delete",
           :aliases => %w{--org -o}, :argument => :optional,
           :from_given => by_name(:organization)
