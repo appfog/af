@@ -15,6 +15,7 @@ require "vmc/spacing"
 require "vmc/cli/help"
 require "vmc/cli/interactive"
 
+require "af/version"
 
 $vmc_asked_auth = false
 
@@ -56,7 +57,7 @@ module VMC
 
     def default_action
       if input[:version]
-        line "af #{VERSION}"
+        line "af #{AF::VERSION}"
       else
         super
       end
