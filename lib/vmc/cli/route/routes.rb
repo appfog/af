@@ -3,7 +3,7 @@ require "vmc/cli/route/base"
 module VMC::Route
   class Routes < Base
     desc "List routes in a space"
-    group :routes
+    group :routes, :hidden => true
 
     def routes
       # TODO: scope to space once space.routes is possible
