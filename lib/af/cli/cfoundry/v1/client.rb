@@ -72,5 +72,13 @@ module CFoundry::V1
 
       services
     end
+
+    def export_service(service_name)
+      @base.get("services", "export", service_name, :accept => :json)
+    end
+
+    def import_service(service_name, uri)
+      @base.post("services", "import", service_name, :payload => {:uri => uri}, :multipart => true, :accept => '*/*; q=0.5, application/xml')
+    end
   end
 end

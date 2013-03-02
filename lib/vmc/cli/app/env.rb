@@ -56,7 +56,7 @@ module VMC::App
 
 
     desc "Remove an environment variable"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to set the variable for",
           :argument => true, :from_given => by_name(:app)
     input :name, :desc => "Variable name", :argument => true
