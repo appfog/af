@@ -3,7 +3,7 @@ require "vmc/cli/domain/base"
 module VMC::Domain
   class Unmap < Base
     desc "Unmap a domain from an organization or space"
-    group :domains
+    group :domains, :hidden => true
     input :domain, :desc => "Domain to unmap", :argument => :required,
           :from_given => by_name("domain")
     input :organization, :desc => "Organization to unmap the domain from",

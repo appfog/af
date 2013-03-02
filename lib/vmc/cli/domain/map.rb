@@ -3,7 +3,7 @@ require "vmc/cli/domain/base"
 module VMC::Domain
   class Map < Base
     desc "Map a domain to an organization or space"
-    group :domains
+    group :domains, :hidden => true
     input :name, :desc => "Domain to map", :argument => :required
     input :organization, :desc => "Organization to map the domain to",
           :aliases => %w{--org -o},
