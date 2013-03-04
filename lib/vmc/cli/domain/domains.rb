@@ -3,7 +3,7 @@ require "vmc/cli/domain/base"
 module VMC::Domain
   class Domains < Base
     desc "List domains in a space"
-    group :domains
+    group :domains, :hidden => true
     input :space, :desc => "Space to list the domains from",
           :argument => :optional, :default => proc { client.current_space },
           :from_given => by_name(:space)
