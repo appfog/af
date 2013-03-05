@@ -1,14 +1,10 @@
 GIT
   remote: git://github.com/appfog/af-cli-plugins.git
-  revision: 451d549febb92a55a208ddcc3daae14874333001
+  revision: 86209fea28898325b0335e0bf5e21cbe05d4222f
   branch: stacked
   specs:
-    clone-af-cli-plugin (0.0.0.2)
-      cfoundry (~> 0.5.0)
     console-vmc-plugin (0.1.1)
       tunnel-vmc-plugin (~> 0.2.0)
-    export-af-cli-plugin (0.0.0.2)
-      cfoundry (~> 0.5.0)
     manifests-vmc-plugin (0.6.1)
       cfoundry (~> 0.5.0)
     tunnel-vmc-plugin (0.2.0.1)
@@ -21,7 +17,7 @@ GIT
 PATH
   remote: ../../appfog/af-cli-plugins
   specs:
-    pull-af-cli-plugin (0.0.0.2)
+    appfog-vmc-plugin (0.0.1)
       cfoundry (~> 0.5.0)
 
 GEM
@@ -70,18 +66,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  appfog-vmc-plugin!
   cfoundry
-  clone-af-cli-plugin!
   clouseau
   console-vmc-plugin!
-  export-af-cli-plugin!
   gem-release
   interact
   json_pure (~> 1.6)
   manifests-vmc-plugin!
   mothership
   multi_json (~> 1.3)
-  pull-af-cli-plugin!
   rake
   rr (~> 1.0)
   rspec (~> 2.11)

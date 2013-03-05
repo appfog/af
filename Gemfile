@@ -18,9 +18,7 @@ git "git://github.com/appfog/af-cli-plugins.git", :branch => "stacked" do # :pat
   gem "console-vmc-plugin"
   gem "manifests-vmc-plugin"
   gem "tunnel-vmc-plugin"
-  gem "clone-af-cli-plugin"
-  gem "export-af-cli-plugin"
-  gem "pull-af-cli-plugin"
+  gem "appfog-vmc-plugin", :path =>'../../appfog/af-cli-plugins'
 end
 
 group :test do

@@ -90,10 +90,9 @@ describe VMC::CLI do
       end
     end
 
-    context 'when the debug flag is off' do
-      it 'outputs the crash log message' do
-        stub(cmd).precondition { raise StandardError.new }
-        mock(cmd).err /StandardError: StandardError\nFor more information, see .+\.af\/crash/
+    context "with a CFoundry authentication error" do
+      let(:action) { proc { raise CFoundry::InvalidAuthToken.new("foo bar") } }
+      let(:asked) { false }
 
       before do
         $vmc_asked_auth = asked
@@ -284,7 +283,7 @@ describe VMC::CLI do
   describe "#client_target" do
     subject { context.client_target }
 
-    context "when a ~/.af/target exists" do
+    context "when a ~/.vmc/target exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
       it "returns the target in that file" do
@@ -292,7 +291,7 @@ describe VMC::CLI do
       end
     end
 
-    context "when a ~/.af_target exists" do
+    context "when a ~/.vmc_target exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
 
       it "returns the target in that file" do
@@ -312,7 +311,7 @@ describe VMC::CLI do
   describe "#targets_info" do
     subject { context.targets_info }
 
-    context "when a ~/.af/tokens.yml exists" do
+    context "when a ~/.vmc/tokens.yml exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
       it "returns the file's contents as a hash" do
@@ -325,7 +324,7 @@ describe VMC::CLI do
       end
     end
 
-    context "when a ~/.af_token file exists" do
+    context "when a ~/.vmc_token file exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
 
       it "returns the target in that file" do
@@ -349,7 +348,7 @@ describe VMC::CLI do
   describe "#target_info" do
     subject { VMC::CLI.new.target_info("https://api.some-domain.com") }
 
-    context "when a ~/.af/tokens.yml exists" do
+    context "when a ~/.vmc/tokens.yml exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/new" }
 
       it "returns the info for the given url" do
@@ -360,7 +359,7 @@ describe VMC::CLI do
       end
     end
 
-    context "when a ~/.af_token file exists" do
+    context "when a ~/.vmc_token file exists" do
       use_fake_home_dir { "#{SPEC_ROOT}/fixtures/fake_home_dirs/old" }
 
       it "returns the info for the given url" do
@@ -398,9 +397,6 @@ describe VMC::CLI do
       it "adds the given target info, and writes the result to ~/.vmc/tokens.yml" do
         context.save_target_info({ :token => "bearer token3" }, "https://api.some-domain.com")
         YAML.load_file(File.expand_path("~/.vmc/tokens.yml")).should == {
-      it "adds the given target info, and writes the result to ~/.af/tokens.yml" do
-        cli.save_target_info({ :token => "bearer token3" }, "https://api.some-domain.com")
-        YAML.load_file(File.expand_path("~/.af/tokens.yml")).should == {
           "https://api.some-domain.com" => { :token => "bearer token3" },
           "https://api.some-other-domain.com" => { :token => "bearer token2" }
         }
@@ -408,9 +404,9 @@ describe VMC::CLI do
     end
 
     describe "#remove_target_info" do
-      it "removes the given target, and writes the result to ~/.af/tokens.yml" do
-        cli.remove_target_info("https://api.some-domain.com")
-        YAML.load_file(File.expand_path("~/.af/tokens.yml")).should == {
+      it "removes the given target, and writes the result to ~/.vmc/tokens.yml" do
+        context.remove_target_info("https://api.some-domain.com")
+        YAML.load_file(File.expand_path("~/.vmc/tokens.yml")).should == {
           "https://api.some-other-domain.com" => { :token => "bearer token2" }
         }
       end

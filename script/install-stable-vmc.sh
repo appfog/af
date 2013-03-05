@@ -29,9 +29,9 @@ gem install cfoundry-*.gem
 popd
 rm -rf vmc-lib-tmp
 
-git clone git://github.com/appfog/af-cli-plugins.git af-cli-plugins-tmp
+git clone git://github.com/cloudfoundry/vmc-plugins.git vmc-plugins-tmp
 pushd vmc-plugins-tmp
-for plugin in manifests console tunnel mcf admin clone; do
+for plugin in manifests console tunnel mcf admin; do
   pushd $plugin
   gem uninstall $plugin-vmc-plugin --all --ignore-dependencies --executables
   gem build $plugin-vmc-plugin.gemspec

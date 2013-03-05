@@ -13,17 +13,17 @@ module VMC
       matching =
         if Gem::Specification.respond_to? :find_all
           Gem::Specification.find_all do |s|
-            s.name =~ /vmc-plugin|af-cli-plugin/
+            s.name =~ /vmc-plugin/
           end
         else
-          Gem.source_index.find_name(/vmc-plugin|af-cli-plugin/)
+          Gem.source_index.find_name(/vmc-plugin/)
         end
 
       enabled = Set.new(matching.collect(&:name))
 
       vmc_gems = Gem.loaded_specs["vmc"]
       ((vmc_gems && vmc_gems.dependencies) || Gem.loaded_specs.values).each do |dep|
-        if dep.name =~ /vmc-plugin|af-cli-plugin/
+        if dep.name =~ /vmc-plugin/
           require "#{dep.name}/plugin"
           enabled.delete dep.name
         end
