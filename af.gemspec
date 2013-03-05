@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "tunnel-vmc-plugin", "~> 0.2"
   s.add_runtime_dependency "export-af-cli-plugin"
   s.add_runtime_dependency "clone-af-cli-plugin"
+  s.add_runtime_dependency "pull-af-cli-plugin"
 
   s.add_development_dependency "rake", "~> 0.9"
   s.add_development_dependency "rspec", "~> 2.11"
