@@ -61,11 +61,7 @@ module VMC::App
     def setup_new_app(path)
       self.path = path
       app = create_app(get_inputs)
-# <<<<<<< HEAD
-#       map_route(app)
-# =======
-#       # map_url(app)
-# >>>>>>> Added infra to url domain
+      # map_route(app)
       create_services(app)
       bind_services(app)
       upload_app(app, path)
