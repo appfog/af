@@ -5,7 +5,7 @@ module VMC::App
     VALID_ENV_VAR = /^[a-zA-Za-z_][[:alnum:]_]*$/
 
     desc "Show all environment variables set for an app"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to inspect the environment of",
           :argument => true, :from_given => by_name(:app)
     def env
@@ -24,7 +24,7 @@ module VMC::App
     end
 
     desc "Set an environment variable"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to set the variable for",
           :argument => true, :from_given => by_name(:app)
     input :name, :desc => "Variable name", :argument => true
