@@ -3,7 +3,7 @@ require "vmc/cli/route/base"
 module VMC::Route
   class Unmap < Base
     desc "Remove a URL mapping"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :url, :desc => "URL to unmap", :argument => :optional,
           :from_given => find_by_name("route") { client.routes }
     input :app, :desc => "Application to remove the URL from",

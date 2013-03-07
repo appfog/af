@@ -5,7 +5,7 @@ module VMC::Route
     def precondition; end
 
     desc "Add a URL mapping"
-    group :apps, :info, :hidden => true
+    group :apps, :info
     input :app, :desc => "Application to add the URL to",
           :argument => :optional, :from_given => by_name(:app)
     input :host, :desc => "Host name for the route",
