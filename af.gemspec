@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Cloud Foundry Team", "AppFog"]
   s.email       = %w(support@appfog.com)
   s.homepage    = "http://github.com/appfog/af"
-  s.summary     = %q{
+  s.description = s.summary = %q{
     Friendly command-line interface for AppFog.
   }
   s.executables = %w{af}
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "mothership", "~> 0.5"
   s.add_runtime_dependency "manifests-vmc-plugin", "~> 0.6"
   s.add_runtime_dependency "tunnel-vmc-plugin", "~> 0.2"
-  s.add_runtime_dependency "appfog-vmc-plugin"
+  s.add_runtime_dependency "appfog-vmc-plugin", "~> 0.1"
 
   s.add_development_dependency "rake", "~> 0.9"
   s.add_development_dependency "rspec", "~> 2.11"

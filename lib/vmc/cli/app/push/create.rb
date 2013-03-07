@@ -25,6 +25,10 @@ module VMC::App
       inputs
     end
 
+    def ask_url(name, infra)
+      ask("Enter URL?", :default => "#{name}.#{infra.base}")
+    end
+
     def determine_infra
       return input[:infra] if input.has?(:infra)
 
@@ -63,7 +67,7 @@ module VMC::App
     def create_app(inputs)
       app = client.app
 
-      inputs.each { |key, value| app.send(:"#{key}=", value) }
+      inputs.each { |key, value| puts key; app.send(:"#{key}=", value) unless value.nil? }
 
       app = filter(:create_app, app)
 
@@ -105,6 +109,7 @@ module VMC::App
         end
       end
     end
+
 
     def create_services(app)
       return unless input[:create_services]

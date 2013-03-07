@@ -19,7 +19,7 @@ git "git://github.com/appfog/af-cli-plugins.git", :branch => "stacked" do # :pat
   gem "mcf-vmc-plugin"
   gem "manifests-vmc-plugin"
   gem "tunnel-vmc-plugin"
-  gem "appfog-vmc-plugin", :path =>'../../appfog/af-cli-plugins'
+  gem "appfog-vmc-plugin", :path =>'../af-cli-plugins'
 end
 
 group :test do

@@ -1,3 +1,3 @@
 module AF
-  VERSION = "1.0.0.beta".freeze
+  VERSION = "0.5.0.beta.4".freeze
 end
