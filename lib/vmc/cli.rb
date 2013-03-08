@@ -19,6 +19,8 @@ require "af/version"
 
 $vmc_asked_auth = false
 
+$command_args = ARGV.join(" ")
+
 module VMC
   class CLI < Mothership
     include VMC::Interactive
@@ -183,6 +185,7 @@ module VMC
       FileUtils.mkdir_p(File.dirname(crash_file))
 
       File.open(crash_file, "w") do |f|
+        f.puts "Command: #{$command_args}"
         f.puts "Time of crash:"
         f.puts "  #{Time.now}"
         f.puts ""
