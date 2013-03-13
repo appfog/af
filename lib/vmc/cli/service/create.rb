@@ -92,12 +92,12 @@ module VMC::Service
 
     private
 
-    def ask_infra(choices, default, other)
-      [ask("Infrastructure?", :choices => client.infras,
+    def ask_infra
+      ask("Infrastructure?", :choices => client.infras,
            :display => proc { |s|
               str = "#{c(s.name, :name)} - #{s.description}"
            },
-           :complete => proc { |s| "#{s.name} #{s.description}" })]
+           :complete => proc { |s| "#{s.name} #{s.description}" })
     end
 
     def ask_offering(offerings)
