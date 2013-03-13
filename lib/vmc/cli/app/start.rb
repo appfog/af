@@ -78,7 +78,7 @@ module VMC::App
 
         seconds = 0
         until app.healthy?
-          sleep 1
+          sleep 4
           seconds += 1
           if seconds == APP_CHECK_LIMIT
             s.give_up do
