@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "cfoundry", "~> 0.5"
   s.add_runtime_dependency "clouseau", "~> 0.0"
   s.add_runtime_dependency "mothership", "~> 0.5"
-  s.add_runtime_dependency "manifests-vmc-plugin", "~> 0.6"
   s.add_runtime_dependency "appfog-tunnel-vmc-plugin", "~> 0.0.1"
   s.add_runtime_dependency "appfog-vmc-plugin", "~> 0.1"
 

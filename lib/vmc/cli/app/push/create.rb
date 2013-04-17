@@ -67,7 +67,7 @@ module VMC::App
     def create_app(inputs)
       app = client.app
 
-      inputs.each { |key, value| puts key; app.send(:"#{key}=", value) unless value.nil? }
+      inputs.each { |key, value| app.send(:"#{key}=", value) unless value.nil? }
 
       app = filter(:create_app, app)
 

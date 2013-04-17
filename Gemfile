@@ -14,12 +14,9 @@ gem "cfoundry"
 gem "clouseau"
 gem "mothership"
 
-git "git://github.com/appfog/af-cli-plugins.git", :branch => "stacked" do # :path =>'../../appfog/af-cli-plugins'
-  gem "appfog-console-vmc-plugin"
-  gem "mcf-vmc-plugin"
-  gem "manifests-vmc-plugin"
+git "git://github.com/appfog/af-cli-plugins.git", :branch => "stacked" do
   gem "appfog-tunnel-vmc-plugin"
-  gem "appfog-vmc-plugin"
+  gem "appfog-vmc-plugin", :path =>'../af-cli-plugins'
 end
 
 group :test do

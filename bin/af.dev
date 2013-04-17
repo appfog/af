@@ -4,7 +4,7 @@
 # We want to use the latest master dependencies in dev. In production always use vmc
 
 $:.push File.expand_path("../../lib", __FILE__)
-require "vmc/version"
+require "af/version"
 require "rubygems"
 require "bundler"
 
