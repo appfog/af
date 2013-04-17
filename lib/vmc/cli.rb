@@ -65,8 +65,12 @@ module VMC
       end
     end
 
+    def target_exists
+      File.exists? target_file
+    end
+
     def check_target
-      unless File.exists? target_file
+      unless target_exists
         fail "Please select a target with 'af target'."
       end
     end
@@ -394,7 +398,7 @@ module VMC
     end
 
     def client(target = client_target)
-      return @@client if defined?(@@client) && @@client
+      return @@client if defined?(@@client) && @@client && @@client.target == target
       return unless target
 
       info = target_info(target)

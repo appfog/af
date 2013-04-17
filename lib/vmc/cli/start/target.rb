@@ -14,8 +14,12 @@ module VMC::Start
     def target
       unless input.has?(:url) || input.has?(:organization) || \
               input.has?(:space)
-        display_target
-        display_org_and_space unless quiet?
+        if target_exists
+          display_target
+          display_org_and_space unless quiet?
+        else
+           fail "No target is set."
+        end
         return
       end
 

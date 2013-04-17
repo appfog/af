@@ -72,6 +72,10 @@ module VMC::Start
 
     private
 
+    def precondition
+      check_target
+    end
+
     def ask_prompts(credentials, prompts)
       prompts.each do |name, meta|
         type, label = meta
