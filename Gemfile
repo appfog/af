@@ -19,6 +19,10 @@ git "git://github.com/appfog/af-cli-plugins.git", :branch => "stacked" do
   gem "appfog-vmc-plugin", :path =>'../af-cli-plugins'
 end
 
+group :development do
+  gem "debugger"
+end
+
 group :test do
   gem "rspec", "~> 2.11"
   gem "webmock", "~> 1.9"

@@ -13,7 +13,7 @@ GIT
 PATH
   remote: ../../appfog/af-cli-plugins
   specs:
-    appfog-vmc-plugin (0.1.8)
+    appfog-vmc-plugin (0.1.9)
       cfoundry (~> 0.5.2)
 
 GEM
@@ -31,7 +31,14 @@ GEM
       rubyzip (~> 0.9)
     clouseau (0.0.2)
       rubyzip (~> 0.9.9)
+    columnize (0.3.6)
     crack (0.3.2)
+    debugger (1.5.0)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.2.0)
+      debugger-ruby_core_source (~> 1.2.0)
+    debugger-linecache (1.2.0)
+    debugger-ruby_core_source (1.2.0)
     diff-lcs (1.2.1)
     gem-release (0.5.2)
     interact (0.5.2)
@@ -66,6 +73,7 @@ DEPENDENCIES
   appfog-vmc-plugin!
   cfoundry
   clouseau
+  debugger
   gem-release
   interact
   json_pure (~> 1.6)
