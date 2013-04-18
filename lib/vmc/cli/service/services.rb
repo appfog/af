@@ -45,7 +45,7 @@ module VMC::Service
         end
       else
         table(
-          ["name", "infra", "service", "version", v2? && "plan", v2? && "bound apps"],
+          ["name", infras_enabled? && "infra", "service", "version", v2? && "plan", v2? && "bound apps"],
           services.collect { |i|
             if v2?
               plan = i.service_plan
@@ -60,7 +60,7 @@ module VMC::Service
             end
 
             [ c(i.name, :name),
-              c(i.infra.name, :infra),
+              infras_enabled? && c(i.infra.name, :infra),
               label,
               version,
               v2? && plan.name,

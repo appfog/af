@@ -59,10 +59,10 @@ module VMC::App
 
     def display_apps_table(apps)
       table(
-        ["name", "infra", "status", "usage", v2? && "plan", "runtime", "url"],
+        ["name", infras_enabled? && "infra", "status", "usage", v2? && "plan", "runtime", "url"],
         apps.collect { |a|
           [ c(a.name, :name),
-            c(a.infra.name, :infra),
+            infras_enabled? && c(a.infra.name, :infra),
             app_status(a),
             "#{a.total_instances} x #{human_mb(a.memory)}",
             v2? && (a.production ? "prod" : "dev"),

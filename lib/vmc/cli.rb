@@ -56,6 +56,8 @@ module VMC
     option :trace, :desc => "Show API traffic", :alias => "-t",
       :default => false
 
+    option :infras, :desc => "Query infras",
+      :type => :boolean, :default => proc { true }
 
     def default_action
       if input[:version]
@@ -232,6 +234,10 @@ module VMC
 
     def color_enabled?
       input[:color]
+    end
+
+    def infras_enabled?
+      input[:infras]
     end
 
     def verbose?

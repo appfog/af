@@ -8,7 +8,7 @@ module VMC::App
     def get_inputs
       inputs = {}
       inputs[:name] = name = input[:name]
-      inputs[:infra] = infra = determine_infra
+      inputs[:infra] = infra = determine_infra if infras_enabled?
       inputs[:url] = input[:url, name, infra]
       inputs[:uris] = [inputs[:url]]
       inputs[:total_instances] = input[:instances]
@@ -26,12 +26,12 @@ module VMC::App
     end
 
     def ask_url(name, infra)
-      ask("Enter URL?", :default => "#{name}.#{infra.base}")
+      urlbase = !infra.nil? ? "#{infra.base}" : "no-infra.af.cm"
+      ask("Enter URL?", :default => "#{name}.#{urlbase}")
     end
 
     def determine_infra
       return input[:infra] if input.has?(:infra)
-
       input[:infra, detector.all_infras, nil, nil]
     end
 

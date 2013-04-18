@@ -25,7 +25,7 @@ module VMC::Service
     def create_service
       offerings = client.services
 
-      if input[:infra]
+      if infras_enabled? && input[:infra] 
         offerings.reject! { |s| s.infra.to_s != input[:infra].name }
       end
 
@@ -66,7 +66,7 @@ module VMC::Service
 
       service = client.service_instance
 
-      service.infra_name = input[:infra].name
+      service.infra_name = input[:infra].name if infras_enabled?
       service.name = input[:name, offering]
 
       if v2?
