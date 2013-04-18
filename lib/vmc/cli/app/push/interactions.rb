@@ -40,7 +40,11 @@ module VMC::App
     end
 
     def ask_infra(choices, default, other)
-      ask_with_other("Infrastructure", client.infras, choices, default, other)
+      ask("Infrastructure?", :choices => client.infras,
+        :display => proc { |s|
+          str = "#{c(s.name, :name)} - #{s.description}"
+        },
+        :complete => proc { |s| "#{s.name} #{s.description}" })
     end
 
     def ask_runtime(choices, default, other)
