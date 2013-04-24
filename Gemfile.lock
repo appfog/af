@@ -13,7 +13,7 @@ GIT
 PATH
   remote: ../../appfog/af-cli-plugins
   specs:
-    appfog-vmc-plugin (0.1.9)
+    appfog-vmc-plugin (0.1.10)
       cfoundry (~> 0.5.2)
 
 GEM
