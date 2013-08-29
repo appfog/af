@@ -83,9 +83,16 @@ module VMC::Cli::Command
     def infras
       infras_info = client.infras
       return display "Multiple infras not supported" if infras_info.empty?
-      itable = table do |t|
-        t.headings = [ 'Name','Description' ]
-        infras_info.each { |i| t << [i[:infra], i[:description]] }
+      if infras_info.detect {|i| i.has_key?(:available) && i[:available] == false } # If one or more infras is unavailable
+        itable = table do |t|
+          t.headings = [ 'Name','Description','Message' ]
+          infras_info.each { |i| t << [i[:infra], i[:description], i[:available] ? '' : 'Unavailable - ' + i[:unavail_message]] }
+        end
+      else # All infras are available
+        itable = table do |t|
+          t.headings = [ 'Name','Description' ] 
+          infras_info.each { |i| t << [i[:infra], i[:description]] }
+        end
       end
       display "\n"
       display itable
