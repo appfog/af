@@ -114,8 +114,8 @@ module VMC::Cli
             return Framework.lookup('WSGI')
 
           # .Net
-          elsif !Dir.glob('web.config').empty?
-            return Framework.lookup('dotNet')
+          elsif !Dir.glob('web.config', File::FNM_CASEFOLD).empty?
+            return Framework.lookup('aspdotnet')
 
           # Node.js
           elsif !Dir.glob('*.js').empty?
