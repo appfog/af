@@ -98,7 +98,7 @@ class VMC::Cli::Runner
 
       # Proxying for another user, requires admin privileges
       opts.on('-u PROXY')          { |proxy| @options[:proxy] = proxy }
-      
+
       # Select infrastructure
       opts.on('--infra INFRA')     { |infra| @options[:infra] = infra }
 
@@ -285,7 +285,7 @@ class VMC::Cli::Runner
       else
         set_cmd(:apps, :files, 2)
       end
-      
+
     when 'download'
       usage('af download <appname> [path]')
       if @args.size == 1
@@ -293,7 +293,7 @@ class VMC::Cli::Runner
       else
         set_cmd(:apps, :download, 2)
       end
-      
+
     when 'pull'
       usage('af pull <appname> [path]')
       if @args.size == 1
@@ -389,16 +389,16 @@ class VMC::Cli::Runner
     when 'export-service'
       usage('af export-service <service-name>')
       set_cmd(:services, :export_service, 1)
-      
+
     when 'import-service'
       usage('af import-service <service-name> <url>')
       set_cmd(:services, :import_service, 2)
-      
+
     when 'clone'
       usage('af clone <src-app> <dest-app> [<infra>]')
       set_cmd(:apps, :clone, 2) if @args.size == 2
       set_cmd(:apps, :clone, 3) if @args.size == 3
-      
+
     when 'aliases'
       usage('af aliases')
       set_cmd(:misc, :aliases)
