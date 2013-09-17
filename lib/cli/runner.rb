@@ -48,6 +48,7 @@ class VMC::Cli::Runner
       # generic tracing and debugging
       opts.on('-t [TKEY]')         { |tkey|  @options[:trace] = tkey || true }
       opts.on('--trace [TKEY]')    { |tkey|  @options[:trace] = tkey || true }
+      opts.on('--crash')           {         @options[:crash] = true }
 
       # start application in debug mode
       opts.on('-d [MODE]')         { |mode|  @options[:debug] = mode || "run" }
@@ -484,7 +485,41 @@ class VMC::Cli::Runner
     @usage_error
   end
 
+  def crash_log(e, message = nil)
+    @finish_time = Time.now
+    diff = @finish_time - @start_time
+
+    if message != nil
+      message = "#{message} (#{e.message})"
+    else
+      message = e.message
+    end
+
+    say message.red
+
+    log = ""
+    log += "Command: af #{ARGV.join(' ')}\n"
+    log += "Execution Time: %.2fs\n" % diff
+    log += "Target: #{VMC::Cli::Config.target_url}\n"
+    log += "Client: v#{VMC::Cli::VERSION}\n"
+    log += "Platform: #{RUBY_PLATFORM} - Ruby:#{RUBY_VERSION}-#{RUBY_PATCHLEVEL}\n"
+    log += "Type: #{e.class}\n"
+    log += "Message: #{e.message}\n"
+    log += "Stack Trace:\n"
+    e.backtrace.each do |trace|
+      log += "  #{trace}\n"
+    end
+
+    if @options[:crash] == true
+      say "--- #{File.expand_path(VMC::Cli::Config::CRASH_FILE)} ---"
+      say log
+    end
+
+    VMC::Cli::Config.store_crash(log)
+  end
+
   def run
+    @start_time = Time.now
 
     trap('TERM') { print "\nTerminated\n"; exit(false)}
 
@@ -512,14 +547,20 @@ class VMC::Cli::Runner
     end
 
   rescue OptionParser::InvalidOption => e
-    puts(e.message.red)
+    crash_log(e)
     puts("\n")
     puts(basic_usage)
     @exit_status = false
   rescue OptionParser::AmbiguousOption => e
-    puts(e.message.red)
+    crash_log(e)
     puts("\n")
     puts(basic_usage)
+    @exit_status = false
+  rescue VMC::Cli::Command::User::InvalidLogin => e
+    crash_log(e)
+    @exit_status = false
+  rescue VMC::Client::BadTarget => e
+    crash_log(e, "Problem with login to '#{VMC::Cli::Config.target_url}', try again or register for an account.")
     @exit_status = false
   rescue VMC::Client::AuthError => e
     if VMC::Cli::Config.auth_token.nil?
@@ -529,31 +570,29 @@ class VMC::Cli::Runner
     end
     @exit_status = false
   rescue VMC::Client::TargetError, VMC::Client::NotFound, VMC::Client::BadTarget  => e
-    puts e.message.red
+    crash_log(e)
     @exit_status = false
   rescue VMC::Client::HTTPException => e
-    puts e.message.red
+    crash_log(e, "There was a problem connecting to the target. Please try again in a few moments.")
     @exit_status = false
   rescue VMC::Cli::GracefulExit => e
     # Redirected commands end up generating this exception (kind of goto)
   rescue VMC::Cli::CliExit => e
-    puts e.message.red
+    crash_log(e)
     @exit_status = false
   rescue VMC::Cli::CliError => e
-    say("Error #{e.error_code}: #{e.message}".red)
+    crash_log(e, "Error #{e.error_code}: #{e.message}")
     @exit_status = false
   rescue SystemExit => e
     @exit_status = e.success?
   rescue SyntaxError => e
-    puts e.message.red
-    puts e.backtrace
+    crash_log(e)
     @exit_status = false
   rescue Interrupt => e
-    say("\nInterrupted".red)
+    crash_log(e, "Interrupted")
     @exit_status = false
   rescue Exception => e
-    puts e.message.red
-    puts e.backtrace
+    crash_log(e)
     @exit_status = false
   ensure
     say("\n")
