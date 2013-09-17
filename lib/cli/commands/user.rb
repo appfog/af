@@ -2,6 +2,9 @@ module VMC::Cli::Command
 
   class User < Base
 
+    # Errors
+    class InvalidLogin < VMC::Client::TargetError; end
+
     def info
       info = client_info
       username = info[:user] || 'N/A'
@@ -10,27 +13,28 @@ module VMC::Cli::Command
     end
 
     def login(email=nil)
-      email    = @options[:email] unless email
-      password = @options[:password]
-      tries ||= 0
+      display "Attempting login to [#{target_url}]" if target_url
+      begin
+        email    = @options[:email] unless email
+        password = @options[:password]
+        tries ||= 0
 
-      unless no_prompt
-        display "Attempting login to [#{target_url}]" if target_url
-        email ||= ask("Email")
-        password ||= ask("Password", :echo => "*")
+        unless no_prompt
+          email ||= ask("Email")
+          password ||= ask("Password", :echo => "*")
+        end
+
+        err "Need a valid email" unless email
+        err "Need a password" unless password
+        login_and_save_token(email, password)
+        say "Successfully logged into [#{target_url}]".green
+      rescue VMC::Client::TargetError
+        if (tries += 1) < 3 && prompt_ok && !@options[:password]
+          display "Problem with login, invalid account or password when attempting to login to '#{target_url}'".red
+          retry
+        end
+        raise InvalidLogin, "Problem with login, invalid account or password when attempting to login to '#{target_url}'"
       end
-
-      err "Need a valid email" unless email
-      err "Need a password" unless password
-      login_and_save_token(email, password)
-      say "Successfully logged into [#{target_url}]".green
-    rescue VMC::Client::TargetError
-      display "Problem with login, invalid account or password when attempting to login to '#{target_url}'".red
-      retry if (tries += 1) < 3 && prompt_ok && !@options[:password]
-      exit 1
-    rescue => e
-      display "Problem with login to '#{target_url}', #{e}, try again or register for an account.".red
-      exit 1
     end
 
     def logout
