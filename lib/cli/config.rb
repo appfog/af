@@ -15,6 +15,7 @@ module VMC::Cli
     ALIASES_FILE   = '~/.af_aliases'
     CLIENTS_FILE   = '~/.af_clients'
     MICRO_FILE     = '~/.af_micro'
+    CRASH_FILE     = '~/.af_crash'
 
     STOCK_CLIENTS = File.expand_path("../../../config/clients.yml", __FILE__)
 
@@ -45,6 +46,11 @@ module VMC::Cli
       def store_target(target_host)
         target_file = File.expand_path(TARGET_FILE)
         lock_and_write(target_file, target_host)
+      end
+
+      def store_crash(log)
+        crash_file = File.expand_path(CRASH_FILE)
+        lock_and_write(crash_file, log)
       end
 
       def all_tokens(token_file_path=nil)

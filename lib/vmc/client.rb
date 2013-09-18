@@ -28,7 +28,7 @@ class VMC::Client
   VMC_HTTP_ERROR_CODES = [ 400, 500 ]
 
   HTTP_TIMEOUT = ENV['TIMEOUT'] ? ENV['TIMEOUT'].to_i : 10*60
-  
+
   # Errors
   class BadTarget <  RuntimeError; end
   class AuthError <  RuntimeError; end
@@ -158,7 +158,7 @@ class VMC::Client
     _, body, headers = http_get(url)
     body
   end
-  
+
   def app_download(name,path)
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
@@ -167,7 +167,7 @@ class VMC::Client
     file.write(body)
     file.close
   end
-  
+
   def app_pull(name, dir)
     check_login_status
     url = path(VMC::APPS_PATH, name, "application")
@@ -247,11 +247,11 @@ class VMC::Client
     app[:services] = services
     update_app(appname, app)
   end
-  
+
   def export_service(service)
     json_get(path(VMC::SERVICE_EXPORT_PATH, service))
   end
-  
+
   def import_service(service,uri)
     json_post(path(VMC::SERVICE_IMPORT_PATH, service),{:uri => uri})
   end
@@ -390,16 +390,16 @@ class VMC::Client
       "aws.af.cm"
     end
   end
-  
-  def infra_valid?(name) 
+
+  def infra_valid?(name)
     infras.detect { |i| i[:infra] == name }
   end
 
   def infra_descriptions
     infras.select{|i| !i.has_key?(:available) || i[:available] == true}.map { |i| i[:description] }
   end
-  
-  def infra_name_for_description(desc) 
+
+  def infra_name_for_description(desc)
     info = infras.detect { |i| i[:description] == desc }
     info ? info[:infra] : ""
   end
@@ -559,5 +559,5 @@ class VMC::Client
   def infras_match?(o1,o2)
     o1 && o2 && ( o1[:infra] == o2[:infra])
   end
-  
+
 end

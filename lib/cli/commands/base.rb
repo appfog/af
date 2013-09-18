@@ -27,7 +27,7 @@ module VMC::Cli
 
         load_manifest manifest_file if manifest_file
       end
-      
+
       def manifest_file
         return @options[:manifest] if @options[:manifest]
         return @manifest_file if @manifest_file

@@ -23,7 +23,7 @@ module VMC::Cli::Command
 
       display "\n"
       return display "No Applications" if apps.nil? || apps.empty?
-      
+
       infra_supported = !apps.detect { |a| a[:infra] }.nil?
 
       apps_table = table do |t|
@@ -34,7 +34,7 @@ module VMC::Cli::Command
           if infra_supported
             a << ( app[:infra] ? app[:infra][:provider] : "   " )
           end
-          t << a  
+          t << a
         end
       end
       display apps_table
@@ -58,7 +58,7 @@ module VMC::Cli::Command
     def console(appname, interactive=true)
 
       app = client.app_info(appname)
-      infra_name = app[:infra] ? app[:infra][:name] : 'aws' # FIXME 
+      infra_name = app[:infra] ? app[:infra][:name] : 'aws' # FIXME
 
       unless defined? Caldecott
         display "To use `vmc rails-console', you must first install Caldecott:"
@@ -213,28 +213,28 @@ module VMC::Cli::Command
     def download(appname, path=nil)
       path = File.expand_path(path || "#{appname}.zip" )
       banner = "Downloading last pushed source code to #{path}: "
-      display banner, false      
+      display banner, false
       client.app_download(appname, path)
       display 'OK'.green
     end
-    
+
     def pull(appname, path=nil)
       path = File.expand_path(path || appname)
       banner = "Pulling last pushed source code: "
-      display banner, false      
+      display banner, false
       client.app_pull(appname, path)
       display 'OK'.green
     end
-    
+
     def clone(src_appname, dest_appname, dest_infra=nil)
-      
+
       # FIXME need to ask for dest_appname if nil
-      
+
       err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
 
       app = client.app_info(src_appname)
 
-      if client.infra_supported? 
+      if client.infra_supported?
         dest_infra = @options[:infra] || client.infra_name_for_description(
             ask("Select Infrastructure",:indexed => true, :choices => client.infra_descriptions))
         client.infra = dest_infra
@@ -251,7 +251,7 @@ module VMC::Cli::Command
         pull(src_appname,zip_path)
 
         display "Cloning '#{src_appname}' to '#{dest_appname}': "
-        
+
         manifest = {
           :name => "#{dest_appname}",
           :staging => app[:staging],
@@ -261,9 +261,9 @@ module VMC::Cli::Command
         }
         manifest[:staging][:command] = app[:staging][:command] if app[:staging][:command]
         manifest[:infra] = { :provider => dest_infra } if dest_infra
-         
-        client.create_app(dest_appname, manifest)      
-        
+
+        client.create_app(dest_appname, manifest)
+
         # Stage and upload the app bits.
         upload_app_bits(dest_appname, zip_path, dest_infra)
 
@@ -289,15 +289,15 @@ module VMC::Cli::Command
             display 'OK'.green
           else
             err "Import data into '#{service}' failed"
-          end          
+          end
         end
-        
+
         no_start = @options[:nostart]
-        start(dest_appname, true) unless no_start  
-        
+        start(dest_appname, true) unless no_start
+
       end
     end
-    
+
     def logs(appname)
       # Check if we have an app before progressing further
       client.app_info(appname)
@@ -524,7 +524,7 @@ module VMC::Cli::Command
             check_unreachable_links(path,afi.included_files(files))
 
             copy_files( path, ignore_sockets( afi.included_files(files)), explode_dir )
-            
+
           end
         end
       end
@@ -739,7 +739,7 @@ module VMC::Cli::Command
         if health == 1.0
           return "RUNNING"
         else
-          return "#{(health * 100).round}%" 
+          return "#{(health * 100).round}%"
         end
       elsif d[:state] == "STARTED"
         return 'N/A' # unstarted instances
@@ -1119,12 +1119,12 @@ module VMC::Cli::Command
       }
       manifest[:staging][:command] = command if command
       manifest[:infra] = { :provider => infra } if infra
-      
+
       # Send the manifest to the cloud controller
       client.create_app(appname, manifest)
       display 'OK'.green
 
-      
+
       existing = Set.new(client.services.collect { |s| s[:name] })
 
       if @app_info && services = @app_info["services"]
