@@ -396,7 +396,7 @@ class VMC::Client
   end
 
   def infra_descriptions
-    infras.map { |i| i[:description] }
+    infras.select{|i| !i.has_key?(:available) || i[:available] == true}.map { |i| i[:description] }
   end
   
   def infra_name_for_description(desc) 
