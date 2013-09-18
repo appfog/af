@@ -18,7 +18,7 @@ module VMC::Cli
       'Erlang/OTP Rebar' => ['otp_rebar',  { :mem => '64M',  :description => 'Erlang/OTP Rebar Application'}],
       'WSGI'     => ['wsgi',    { :mem => '64M',  :description => 'Python WSGI Application'}],
       'Django'   => ['django',  { :mem => '128M', :description => 'Python Django Application'}],
-      'dotNet'   => ['dotNet',  { :mem => '128M', :description => '.Net Web Application'}],
+      'aspdotnet'   => ['aspdotnet',  { :mem => '128M', :description => 'ASP.NET Application'}],
       'Rack'     => ['rack', { :mem => '128M', :description => 'Rack Application'}],
       'Play'     => ['play',  { :mem => '256M', :description => 'Play Framework Application'}]
     }
@@ -114,8 +114,8 @@ module VMC::Cli
             return Framework.lookup('WSGI')
 
           # .Net
-          elsif !Dir.glob('web.config').empty?
-            return Framework.lookup('dotNet')
+          elsif !Dir.glob('web.config', File::FNM_CASEFOLD).empty?
+            return Framework.lookup('aspdotnet')
 
           # Node.js
           elsif !Dir.glob('*.js').empty?
