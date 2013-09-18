@@ -497,8 +497,12 @@ class VMC::Cli::Runner
 
     say message.red
 
+    @options[:password] = "".rjust(@options[:password].length, '*') if @options[:password]
+
     log = ""
-    log += "Command: af #{ARGV.join(' ')}\n"
+    log += "Action: #{@action}\n"
+    log += "Arguments: #{@args.join(' ')}\n" if "#{@action}" != 'environment_add'
+    log += "Options: #{@options.to_json}\n"
     log += "Execution Time: %.2fs\n" % diff
     log += "Target: #{VMC::Cli::Config.target_url}\n"
     log += "Client: v#{VMC::Cli::VERSION}\n"
