@@ -57,7 +57,7 @@ module VMC::Cli::Command
       end
       if usage = info[:usage] and limits = info[:limits]
         tmem  = pretty_size(limits[:memory]*1024*1024)
-        mem   = pretty_size(usage[:memory]*1024*1024)
+        mem   = pretty_size((usage[:memory] || 0)*1024*1024)
         tser  = limits[:services]
         ser   = usage[:services]
         tapps = limits[:apps] || 0

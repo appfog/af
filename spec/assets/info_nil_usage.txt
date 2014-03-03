@@ -1,0 +1,27 @@
+HTTP/1.1 200 OK
+Server: nginx/0.7.65
+Date: Thu, 03 Mar 2011 19:25:34 GMT
+Content-Type: application/json
+Connection: keep-alive
+Keep-Alive: timeout=20
+Content-Length: 380
+
+{
+  "name": "vcap",
+  "build": "346578549b8e5",
+  "support": "ac-support@vmware.com",
+  "version": 0.999,
+  "limits": {
+    "apps": 50,
+    "memory": 8192,
+    "app_uris": 4,
+    "services": 4
+  },
+  "user": "nerf@gmail.com",
+  "description": "VMware's Cloud Application Platform",
+  "usage": {
+    "apps": null,
+    "memory": null,
+    "services": 0
+  }
+}
