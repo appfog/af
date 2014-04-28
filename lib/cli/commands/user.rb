@@ -53,6 +53,7 @@ module VMC::Cli::Command
         err "Passwords did not match, try again" if password != password2
       end
       err "Password required" unless password
+      err "Passwords may not contain braces" if password =~ /[{}]/
       client.change_password(password)
       say "\nSuccessfully changed password".green
     end

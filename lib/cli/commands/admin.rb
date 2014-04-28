@@ -32,6 +32,7 @@ module VMC::Cli::Command
       end
       err "Need a valid email" unless email
       err "Need a password" unless password
+      err "Passwords may not contain braces" if password =~ /[{}]/
       display 'Creating New User: ', false
       client.add_user(email, password)
       display 'OK'.green
