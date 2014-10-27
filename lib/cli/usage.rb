@@ -42,16 +42,17 @@ Currently available af commands are:
     push [appname] --runtime RUNTIME             Set the runtime to use for the application
     push [appname] --debug [MODE]                Push application and start in a debug mode
     push [appname] --no-start                    Do not auto-start the application
+    push [appname] --label                       Add specified label to app revision record
 
   Application Operations
     start <appname> [--debug [MODE]]             Start the application
     stop  <appname>                              Stop the application
     restart <appname> [--debug [MODE]]           Restart the application
     delete <appname>                             Delete the application
-    clone <src-app> <dest-app> [infra]           Clone the application and services
+    clone <src-app> <dest-app> [infra] --label LABEL     Clone the application and services
 
   Application Updates
-    update <appname> [--path,--debug [MODE]]     Update the application bits
+    update <appname> [--path,--debug [MODE],--label]     Update the application bits
     mem <appname> [memsize]                      Update the memory reservation for an application
     map <appname> <url>                          Register the application to the url
     unmap <appname> <url>                        Unregister the application from the url

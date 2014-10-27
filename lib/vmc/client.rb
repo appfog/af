@@ -91,7 +91,7 @@ class VMC::Client
     json_put(path(VMC::APPS_PATH, name), manifest)
   end
 
-  def upload_app(name, zipfile, resource_manifest=nil)
+  def upload_app(name, zipfile, hash, label, resource_manifest=nil)
     #FIXME, manifest should be allowed to be null, here for compatability with old cc's
     resource_manifest ||= []
     check_login_status
@@ -104,8 +104,9 @@ class VMC::Client
       end
       upload_data[:application] = file
     end
+    headers = {:hash => hash, :label => label}
     upload_data[:resources] = resource_manifest.to_json if resource_manifest
-    http_post(path(VMC::APPS_PATH, name, "application"), upload_data)
+    http_post(path(VMC::APPS_PATH, name, "application"), upload_data, nil, headers)
   rescue RestClient::ServerBrokeConnection
     retry
   end
@@ -147,6 +148,11 @@ class VMC::Client
   def app_crashes(name)
     check_login_status
     json_get(path(VMC::APPS_PATH, name, "crashes"))
+  end
+
+  def app_history(name)
+    check_login_status
+    json_get(path(VMC::APPS_PATH, name, "history"))
   end
 
   # List the directory or download the actual file indicated by
@@ -444,8 +450,8 @@ class VMC::Client
     request(:get, path, content_type)
   end
 
-  def http_post(path, body, content_type=nil)
-    request(:post, path, content_type, body)
+  def http_post(path, body, content_type=nil, headers = {})
+    request(:post, path, content_type, body, headers)
   end
 
   def http_put(path, body, content_type=nil)

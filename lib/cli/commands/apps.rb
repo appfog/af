@@ -6,6 +6,7 @@ require 'tmpdir'
 require 'set'
 require "uuidtools"
 require 'socket'
+require 'digest/md5'
 
 module VMC::Cli::Command
 
@@ -228,6 +229,12 @@ module VMC::Cli::Command
 
     def clone(src_appname, dest_appname, dest_infra=nil)
 
+      if (@options[:label])
+        label = @options[:label]
+      else
+        label = ''
+      end
+
       # FIXME need to ask for dest_appname if nil
 
       err "Application '#{dest_appname}' already exists" if app_exists?(dest_appname)
@@ -265,7 +272,7 @@ module VMC::Cli::Command
         client.create_app(dest_appname, manifest)
 
         # Stage and upload the app bits.
-        upload_app_bits(dest_appname, zip_path, dest_infra)
+        upload_app_bits(dest_appname, zip_path, dest_infra, label)
 
         # Clone services
         client.services.select { |s| app[:services].include?(s[:name])}.each do |service|
@@ -367,13 +374,19 @@ module VMC::Cli::Command
     end
 
     def update(appname=nil)
+      if (@options[:label])
+        label = @options[:label]
+      else
+        label = ''
+      end
+
       if appname
         app = client.app_info(appname)
         if @options[:canary]
           display "[--canary] is deprecated and will be removed in a future version".yellow
         end
         infra = app[:infra] ? app[:infra][:provider] : nil
-        upload_app_bits(appname, @path, infra)
+        upload_app_bits(appname, @path, infra, label)
         restart appname if app[:state] == 'STARTED'
       else
         each_app do |name|
@@ -381,13 +394,19 @@ module VMC::Cli::Command
 
           app = client.app_info(name)
           infra = app[:infra] ? app[:infra][:provider] : nil
-          upload_app_bits(name, @application, infra)
+          upload_app_bits(name, @application, infra, label)
           restart name if app[:state] == 'STARTED'
         end
       end
     end
 
     def push(appname=nil)
+      if (@options[:label])
+        label = @options[:label]
+      else
+        label = ''
+      end
+
       unless no_prompt || @options[:path]
         proceed = ask(
           'Would you like to deploy from the current directory?',
@@ -402,14 +421,30 @@ module VMC::Cli::Command
       pushed = false
       each_app(false) do |name|
         display "Pushing application '#{name}'..." if name
-        do_push(name)
+        do_push(label, name)
         pushed = true
       end
 
       unless pushed
         @application = @path
-        do_push(appname)
+        do_push(label, appname)
       end
+    end
+
+    def history(appname)
+      history = client.app_history(appname)
+
+      # return display JSON.pretty_generate(history) if @options[:json]
+      return display "No History Available" if history.empty?
+      history_table = table do |t|
+        t.headings = 'Label', 'Release ', 'By User', 'Release Date', 'Hash', 'Changed'
+        history.each do |app|
+          a = [app[:label], "v" << app[:release].to_s, app[:updated_by], Time.parse(app[:updated_at]).to_time, app[:update_hash][0..9], app[:is_changed]==true ? "Yes" : "No"]
+          t << a
+        end
+      end
+      display "\n"
+      display history_table
     end
 
     def environment(appname)
@@ -492,7 +527,7 @@ module VMC::Cli::Command
       err "Can't deploy applications from staging directory: [#{Dir.tmpdir}]"
     end
 
-    def upload_app_bits(appname, path, infra)
+    def upload_app_bits(appname, path, infra, label)
       display 'Uploading Application:'
 
       upload_file, file = "#{Dir.tmpdir}/#{appname}.zip", nil
@@ -588,6 +623,10 @@ module VMC::Cli::Command
         upload_size = '0K'
       end
 
+      # compute hash for versioning info
+      tarfile = VMC::Cli::ZipUtil.tar(explode_dir)
+      hash = Digest::MD5.file(tarfile)
+
       upload_str = "  Uploading (#{upload_size}): "
       display upload_str, false
 
@@ -595,7 +634,7 @@ module VMC::Cli::Command
       FileWithPercentOutput.upload_size = File.size(upload_file);
       file = FileWithPercentOutput.open(upload_file, 'rb')
 
-      client.upload_app(appname, file, appcloud_resources)
+      client.upload_app(appname, file, hash, label, appcloud_resources)
       display 'OK'.green if VMC::Cli::ZipUtil.get_files_to_pack(explode_dir).empty?
 
       display 'Push Status: ', false
@@ -605,6 +644,7 @@ module VMC::Cli::Command
         # Cleanup if we created an exploded directory.
         FileUtils.rm_f(upload_file) if upload_file
         FileUtils.rm_rf(explode_dir) if explode_dir
+        FileUtils.rm_rf(tarfile) if tarfile
     end
 
     def check_app_limit
@@ -991,7 +1031,7 @@ module VMC::Cli::Command
       display 'OK'.green
     end
 
-    def do_push(appname=nil)
+    def do_push(label, appname=nil)
 
       unless @app_info || no_prompt
         @manifest = { "applications" => { @path => { "name" => appname } } }
@@ -1138,7 +1178,7 @@ module VMC::Cli::Command
       end
 
       # Stage and upload the app bits.
-      upload_app_bits(appname, @application, infra)
+      upload_app_bits(appname, @application, infra, label)
 
       start(appname, true) unless no_start
     end

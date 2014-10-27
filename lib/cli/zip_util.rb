@@ -1,5 +1,6 @@
-
+require 'fileutils'
 require 'zip/zipfilesystem'
+require 'pathname'
 
 module VMC::Cli
 
@@ -70,6 +71,30 @@ module VMC::Cli
             zf.add(f.sub("#{dir}/",''), f)
           end
         end
+      end
+
+      BLOCKSIZE_TO_READ = 1024 * 1000
+
+      # not a valid tar file, since tar files include last modified date which breaks it for
+      # use in hashing. this method just wraps up everything for use in hashing.
+      def tar(path)
+        tar_filename = Pathname.new(path).realpath.to_path + '.tar'
+        File.open(tar_filename, 'wb') do |tarfile|
+          get_files_to_pack(path).each do |file|
+            if File.file?(file)
+              File.open(file, 'rb') do |f|
+                while buffer = f.read(BLOCKSIZE_TO_READ)
+                  tarfile.write buffer
+                end
+              end
+            else
+              tarfile.write file
+            end
+          end
+        end
+
+        tar_filename
+
       end
 
     end

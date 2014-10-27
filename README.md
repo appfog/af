@@ -42,6 +42,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       push [appname] --instances <N>               Set the expected number <N> of instances
       push [appname] --mem M                       Set the memory reservation for the application
       push [appname] --no-start                    Do not auto-start the application
+      push [appname] --label                       Add specified label to app revision record
 
     Application Download
       pull <appname> [path]                        Downloads last pushed source to <appname> or [path]
@@ -53,7 +54,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       delete <appname>                             Delete the application
 
     Application Updates
-      update <appname> [--path]                    Update the application bits
+      update <appname> [--path] [--label]          Update the application bits, with optional revision label
       mem <appname> [memsize]                      Update the memory reservation for an application
       map <appname> <url>                          Register the application to the url
       unmap <appname> <url>                        Unregister the application from the url
