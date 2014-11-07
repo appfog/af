@@ -341,6 +341,14 @@ class VMC::Cli::Runner
       usage('af history <appname>')
       set_cmd(:apps, :history, 1)
 
+    when 'hash'
+      usage('af hash')
+      set_cmd(:apps, :hash, 0)
+
+    when 'diff'
+      usage('af diff <appname>')
+      set_cmd(:apps, :diff, 1)
+
     when 'services'
       usage('af services')
       set_cmd(:services, :services)

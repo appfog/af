@@ -155,6 +155,11 @@ class VMC::Client
     json_get(path(VMC::APPS_PATH, name, "history"))
   end
 
+  def app_diff(name)
+    check_login_status
+    json_get(path(VMC::APPS_PATH, name, "diff"))
+  end
+
   # List the directory or download the actual file indicated by
   # the path.
   def app_files(name, path, instance='0')

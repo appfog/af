@@ -88,7 +88,7 @@ module VMC::Cli
                 end
               end
             else
-              tarfile.write file
+              tarfile.write file.gsub(path, '')
             end
           end
         end

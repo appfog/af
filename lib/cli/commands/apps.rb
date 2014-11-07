@@ -447,6 +447,22 @@ module VMC::Cli::Command
       display history_table
     end
 
+    def hash()
+      hash = hash_app_bits(@path)
+
+      display "The hash of the current directory is: " + hash.to_s[0..9]
+    end
+
+    def diff(appname)
+      diff = client.app_diff(appname)[0]
+      hash = hash_app_bits(@path)
+
+      comp = (hash == diff[:update_hash])
+      comparison = comp ? "up to date." : "different than " + appname + "."
+
+      display "App is " + comparison
+    end
+
     def environment(appname)
       app = client.app_info(appname)
       env = app[:env] || []
@@ -564,6 +580,9 @@ module VMC::Cli::Command
         end
       end
 
+      # compute hash for versioning info
+      tarfile = VMC::Cli::ZipUtil.tar(explode_dir)
+      hash = Digest::MD5.file(tarfile)
 
       # Send the resource list to the cloudcontroller, the response will tell us what it already has..
       unless @options[:noresources]
@@ -623,10 +642,6 @@ module VMC::Cli::Command
         upload_size = '0K'
       end
 
-      # compute hash for versioning info
-      tarfile = VMC::Cli::ZipUtil.tar(explode_dir)
-      hash = Digest::MD5.file(tarfile)
-
       upload_str = "  Uploading (#{upload_size}): "
       display upload_str, false
 
@@ -645,6 +660,51 @@ module VMC::Cli::Command
         FileUtils.rm_f(upload_file) if upload_file
         FileUtils.rm_rf(explode_dir) if explode_dir
         FileUtils.rm_rf(tarfile) if tarfile
+    end
+
+    # To support the hash command
+    def hash_app_bits(path)
+      explode_dir = "#{Dir.tmpdir}/.vmc_temp_files"
+      FileUtils.rm_rf(explode_dir) # Make sure we didn't have anything left over..
+
+      if path =~ /\.(war|zip)$/
+        #single file that needs unpacking
+        VMC::Cli::ZipUtil.unpack(path, explode_dir)
+      elsif !File.directory? path
+        #single file that doesn't need unpacking
+        FileUtils.mkdir(explode_dir)
+        FileUtils.cp(path,explode_dir)
+      else
+        Dir.chdir(path) do
+          # Stage the app appropriately and do the appropriate fingerprinting, etc.
+          if war_file = Dir.glob('*.war').first
+            VMC::Cli::ZipUtil.unpack(war_file, explode_dir)
+          elsif zip_file = Dir.glob('*.zip').first
+            VMC::Cli::ZipUtil.unpack(zip_file, explode_dir)
+          else
+            FileUtils.mkdir(explode_dir)
+
+            afi = VMC::Cli::FileHelper::AppFogIgnore.from_file("#{path}")
+
+            files = Dir.glob("#{path}/**/*", File::FNM_DOTMATCH)
+            check_unreachable_links(path,afi.included_files(files))
+
+            copy_files( path, ignore_sockets( afi.included_files(files)), explode_dir )
+
+          end
+        end
+      end
+
+      # compute hash for versioning info
+      tarfile = VMC::Cli::ZipUtil.tar(explode_dir)
+      hash = Digest::MD5.file(tarfile)
+
+      ensure
+        # Cleanup if we created an exploded directory.
+        FileUtils.rm_rf(explode_dir) if explode_dir
+        FileUtils.rm_rf(tarfile) if tarfile
+
+      hash
     end
 
     def check_app_limit
