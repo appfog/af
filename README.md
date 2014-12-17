@@ -68,6 +68,9 @@ MIT license, please see the LICENSE file.  All rights reserved._
       files <appname> [path] [--all]               Display directory listing or file download for path
       stats <appname>                              Display resource usage for the application
       instances <appname>                          List application instances
+      history <appname>                            Show version history of app
+      diff <appname>                               Compare your current directory with deployed app
+      hash <appname>                               Compute hash of your current directory
 
     Application Environment
       env <appname>                                List application environment variables
