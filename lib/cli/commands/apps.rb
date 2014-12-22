@@ -458,9 +458,9 @@ module VMC::Cli::Command
       hash = hash_app_bits(@path)
 
       comp = (hash == diff[:update_hash])
-      comparison = comp ? "up to date." : "different than " + appname + "."
+      comparison = comp ? "Deployed app (" + appname + ") matches current directory" : "Deployed app (" + appname + ") does NOT match current directory"
 
-      display "App is " + comparison
+      display comparison
     end
 
     def environment(appname)
