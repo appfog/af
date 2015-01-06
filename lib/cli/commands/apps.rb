@@ -447,10 +447,24 @@ module VMC::Cli::Command
       display history_table
     end
 
-    def hash()
-      hash = hash_app_bits(@path)
+    def hash(path=nil)
+      if (@options[:full])
+        full = true
+      else
+        full = false
+      end
 
-      display "The hash of the current directory is: " + hash.to_s[0..9]
+      if not path
+        path = @path
+      end
+
+      hash = hash_app_bits(File.expand_path(path))
+
+      if full
+        display hash.to_s
+      else
+        display "The hash of the current directory is: " + hash.to_s[0..9]
+      end
     end
 
     def diff(appname)

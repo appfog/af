@@ -70,7 +70,7 @@ MIT license, please see the LICENSE file.  All rights reserved._
       instances <appname>                          List application instances
       history <appname>                            Show version history of the application
       diff <appname>                               Compare current directory with deployed application
-      hash <appname>                               Compute hash of your current directory
+      hash [path] [--full]                         Compute hash of directory, defaults to current
 
     Application Environment
       env <appname>                                List application environment variables

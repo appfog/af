@@ -67,7 +67,7 @@ Currently available af commands are:
     instances <appname>                          List application instances
     history <appname>                            Show version history of the application
     diff <appname>                               Compare current directory with deployed application
-    hash <appname>                               Compute hash of your current directory
+    hash [path] [--full]                         Compute hash of directory, defaults to current
     
   Application Download
     pull <appname> [path]                        Downloads last pushed source to <appname> or [path]

@@ -45,6 +45,7 @@ class VMC::Cli::Runner
       opts.on('--nostart')         {         @options[:nostart] = true }
       opts.on('--force')           {         @options[:force] = true }
       opts.on('--all')             {         @options[:all] = true }
+      opts.on('--full')            {         @options[:full] = true }
 
       # generic tracing and debugging
       opts.on('-t [TKEY]')         { |tkey|  @options[:trace] = tkey || true }
@@ -342,8 +343,12 @@ class VMC::Cli::Runner
       set_cmd(:apps, :history, 1)
 
     when 'hash'
-      usage('af hash')
-      set_cmd(:apps, :hash, 0)
+      usage('hash [path] [--full]')
+      if @args.size == 1
+        set_cmd(:apps, :hash, 1)
+      else
+        set_cmd(:apps, :hash, 0)
+      end
 
     when 'diff'
       usage('af diff <appname>')
