@@ -40,10 +40,12 @@ class VMC::Cli::Runner
       opts.on('--url URL')         { |url|   @options[:url] = url }
       opts.on('--mem MEM')         { |mem|   @options[:mem] = mem }
       opts.on('--path PATH')       { |path|  @options[:path] = path }
+      opts.on('--label LABEL')     { |label| @options[:label] = label }
       opts.on('--no-start')        {         @options[:nostart] = true }
       opts.on('--nostart')         {         @options[:nostart] = true }
       opts.on('--force')           {         @options[:force] = true }
       opts.on('--all')             {         @options[:all] = true }
+      opts.on('--full')            {         @options[:full] = true }
 
       # generic tracing and debugging
       opts.on('-t [TKEY]')         { |tkey|  @options[:trace] = tkey || true }
@@ -325,7 +327,7 @@ class VMC::Cli::Runner
       set_cmd(:apps, :crashlogs, 1)
 
     when 'push'
-      usage('af push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start] [--infra infraname]')
+      usage('af push [appname] [--path PATH] [--url URL] [--instances N] [--mem] [--runtime RUNTIME] [--no-start] [--infra infraname] [--label LABEL]')
       if @args.size == 1
         set_cmd(:apps, :push, 1)
       else
@@ -333,8 +335,24 @@ class VMC::Cli::Runner
       end
 
     when 'update'
-      usage('af update <appname> [--path PATH]')
+      usage('af update <appname> [--path PATH] [--label LABEL]')
       set_cmd(:apps, :update, @args.size == 1 ? 1 : 0)
+
+    when 'history'
+      usage('af history <appname>')
+      set_cmd(:apps, :history, 1)
+
+    when 'hash'
+      usage('hash [path] [--full]')
+      if @args.size == 1
+        set_cmd(:apps, :hash, 1)
+      else
+        set_cmd(:apps, :hash, 0)
+      end
+
+    when 'diff'
+      usage('af diff <appname>')
+      set_cmd(:apps, :diff, 1)
 
     when 'services'
       usage('af services')
@@ -396,7 +414,7 @@ class VMC::Cli::Runner
       set_cmd(:services, :import_service, 2)
 
     when 'clone'
-      usage('af clone <src-app> <dest-app> [<infra>]')
+      usage('af clone <src-app> <dest-app> [<infra>] --label LABEL')
       set_cmd(:apps, :clone, 2) if @args.size == 2
       set_cmd(:apps, :clone, 3) if @args.size == 3
 
