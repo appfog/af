@@ -432,19 +432,23 @@ module VMC::Cli::Command
     end
 
     def history(appname)
-      history = client.app_history(appname)
+      if app_exists?(appname)
+        history = client.app_history(appname)
 
-      # return display JSON.pretty_generate(history) if @options[:json]
-      return display "No History Available For Application \"" + appname + "\"" if history.empty?
-      history_table = table do |t|
-        t.headings = 'Label', 'Release ', 'By User', 'Release Date', 'Hash', 'Changed'
-        history.each do |app|
-          a = [app[:label], "v" << app[:release].to_s, app[:updated_by], Time.parse(app[:updated_at]).to_time, app[:update_hash][0..9], app[:is_changed]==true ? "Yes" : "No"]
-          t << a
+        # return display JSON.pretty_generate(history) if @options[:json]
+        return display "No history available" if history.empty?
+        history_table = table do |t|
+          t.headings = 'Label', 'Release ', 'By User', 'Release Date', 'Hash', 'Changed'
+          history.each do |app|
+            a = [app[:label], "v" << app[:release].to_s, app[:updated_by], Time.parse(app[:updated_at]).to_time, app[:update_hash][0..9], app[:is_changed]==true ? "Yes" : "No"]
+            t << a
+          end
         end
+        display "\n"
+        display history_table
+      else
+        display "No application named \"" + appname + "\" found"
       end
-      display "\n"
-      display history_table
     end
 
     def hash(path=nil)
@@ -454,7 +458,9 @@ module VMC::Cli::Command
         full = false
       end
 
+      current_dir = false
       if not path
+        current_dir = true
         path = @path
       end
 
@@ -463,19 +469,26 @@ module VMC::Cli::Command
       if full
         display hash.to_s
       else
-        display "The hash of the current directory is: " + hash.to_s[0..9]
+        if current_dir
+          display "The hash for the current directory is: " + hash.to_s[0..9]
+        else
+          display "The hash for " + path + " is: " + hash.to_s[0..9]
+        end
       end
     end
 
     def diff(appname)
-      diff = client.app_diff(appname)[0]
-      return display "No Diff Available For Application \"" + appname + "\"" if diff.nil? or diff.empty?
-      hash = hash_app_bits(@path)
+      if app_exists?(appname)
+        diff = client.app_diff(appname)[0]
+        return display "No diff available" if diff.nil? or diff.empty?
+        hash = hash_app_bits(@path)
 
-      comp = (hash == diff[:update_hash])
-      comparison = comp ? "Deployed app (" + appname + ") matches current directory" : "Deployed app (" + appname + ") does NOT match current directory"
-
-      display comparison
+        comp = (hash == diff[:update_hash])
+        comparison = comp ? "Deployed app \"" + appname + "\" matches app in current directory" : "Deployed app \"" + appname + "\" does not match app in current directory"
+        display comparison
+      else
+        display "No application named \"" + appname + "\" found"
+      end
     end
 
     def environment(appname)
