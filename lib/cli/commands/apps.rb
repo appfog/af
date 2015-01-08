@@ -435,7 +435,7 @@ module VMC::Cli::Command
       history = client.app_history(appname)
 
       # return display JSON.pretty_generate(history) if @options[:json]
-      return display "No History Available" if history.empty?
+      return display "No History Available For Application \"" + appname + "\"" if history.empty?
       history_table = table do |t|
         t.headings = 'Label', 'Release ', 'By User', 'Release Date', 'Hash', 'Changed'
         history.each do |app|
@@ -469,6 +469,7 @@ module VMC::Cli::Command
 
     def diff(appname)
       diff = client.app_diff(appname)[0]
+      return display "No Diff Available For Application \"" + appname + "\"" if diff.nil? or diff.empty?
       hash = hash_app_bits(@path)
 
       comp = (hash == diff[:update_hash])
