@@ -447,7 +447,7 @@ module VMC::Cli::Command
         display "\n"
         display history_table
       else
-        display "No application named \"" + appname + "\" found"
+        display "No application named '" + appname + "' found"
       end
     end
 
@@ -484,10 +484,10 @@ module VMC::Cli::Command
         hash = hash_app_bits(@path)
 
         comp = (hash == diff[:update_hash])
-        comparison = comp ? "Deployed app \"" + appname + "\" matches app in current directory" : "Deployed app \"" + appname + "\" does not match app in current directory"
+        comparison = comp ? "Deployed app '" + appname + "' matches app in current directory" : "Deployed app '" + appname + "' does not match app in current directory"
         display comparison
       else
-        display "No application named \"" + appname + "\" found"
+        display "No application named '" + appname + "' found"
       end
     end
 
