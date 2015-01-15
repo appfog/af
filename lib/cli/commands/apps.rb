@@ -571,7 +571,7 @@ module VMC::Cli::Command
       err "Can't deploy applications from staging directory: [#{Dir.tmpdir}]"
     end
 
-    def upload_app_bits(appname, path, infra, label)
+    def upload_app_bits(appname, path, infra, label=nil)
       display 'Uploading Application:'
 
       upload_file, file = "#{Dir.tmpdir}/#{appname}.zip", nil
@@ -677,7 +677,7 @@ module VMC::Cli::Command
       FileWithPercentOutput.upload_size = File.size(upload_file);
       file = FileWithPercentOutput.open(upload_file, 'rb')
 
-      client.upload_app(appname, file, hash, label, appcloud_resources)
+      client.upload_app(appname, file, hash, label.nil? ? "": label, appcloud_resources)
       display 'OK'.green if VMC::Cli::ZipUtil.get_files_to_pack(explode_dir).empty?
 
       display 'Push Status: ', false
