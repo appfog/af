@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem 'rack', '~> 1.2.0'
+gem 'rack', '~> 2.1.4'
 gem 'caldecott', '= 0.0.3'
 gem 'bundler'
 gem 'em-websocket'
